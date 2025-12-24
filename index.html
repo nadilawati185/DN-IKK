@@ -107,33 +107,17 @@
  </head>
  <body class="h-full theme-blue" style="background-color: var(--background); color: var(--text);">
   <div class="h-full w-full overflow-auto">
-   <div class="min-h-full"><!-- Login Screen -->
-    <div id="login-screen" class="flex items-center justify-center min-h-screen px-4">
-     <div class="w-full max-w-md p-8 rounded-2xl shadow-2xl" style="background-color: var(--surface);">
-      <div class="text-center mb-8">
-       <div class="text-6xl mb-4">
-        🔐
-       </div>
-       <h2 class="text-3xl font-bold mb-2" style="color: var(--primary);">DN ORDER IKK</h2>
-       <p class="text-lg" style="color: var(--text-secondary);">INDAH KIAT KARAWANG</p>
-      </div>
-      <form id="login-form" class="space-y-4">
-       <div><label for="username" class="block text-sm font-medium mb-2">Username</label> <input type="text" id="username" value="IKK" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2" style="border-color: var(--text-secondary); background-color: var(--background);">
-       </div><button type="submit" class="w-full py-3 rounded-lg font-bold text-white shadow-lg" style="background-color: var(--primary);"> 🚀 Login </button>
-      </form>
-     </div>
-    </div><!-- Header -->
-    <header id="main-header" class="hidden shadow-md" style="background-color: var(--surface);">
+   <div class="min-h-full"><!-- Header -->
+    <header id="main-header" class="shadow-md" style="background-color: var(--surface);">
      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="flex justify-between items-center">
        <div>
         <h1 id="app-title" class="text-3xl font-bold" style="color: var(--primary);">DN ORDER IKK</h1>
         <p id="company-name" class="text-sm mt-1" style="color: var(--text-secondary);">INDAH KIAT KARAWANG</p>
-        <p id="logged-user" class="text-xs mt-1 font-medium" style="color: var(--secondary);"></p>
         <div class="flex items-center gap-2 mt-2"><span id="online-status" class="flex items-center gap-2 text-sm font-medium"> <span id="status-dot" class="w-3 h-3 rounded-full bg-green-500"></span> <span id="status-text">Online</span> </span> <span id="sync-status" class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800 hidden"> 🔄 Syncing... </span>
         </div>
        </div>
-       <div class="flex gap-3"><button id="calendar-btn" class="px-4 py-2 rounded-lg font-medium shadow-sm" style="background-color: var(--primary); color: white;"> 📅 Calendar </button> <button id="settings-btn" class="px-4 py-2 rounded-lg font-medium shadow-sm" style="background-color: var(--secondary); color: white;"> ⚙️ Settings </button> <button id="logout-btn" class="px-4 py-2 rounded-lg font-medium shadow-sm bg-red-500 text-white"> 🚪 Logout </button>
+       <div class="flex gap-3"><button id="calendar-btn" class="px-4 py-2 rounded-lg font-medium shadow-sm" style="background-color: var(--primary); color: white;"> 📅 Calendar </button> <button id="settings-btn" class="px-4 py-2 rounded-lg font-medium shadow-sm" style="background-color: var(--secondary); color: white;"> ⚙️ Settings </button>
        </div>
       </div><!-- Summary Tables -->
       <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6"><!-- BU 17 Summary -->
@@ -189,7 +173,7 @@
       </div>
      </div>
     </header><!-- Main Content -->
-    <main id="main-content" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"><!-- Quick Actions -->
+    <main id="main-content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"><!-- Quick Actions -->
      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"><button id="add-order-btn" class="p-6 rounded-xl shadow-lg font-bold text-white text-lg" style="background-color: var(--primary);">      Add Order </button> <button id="view-orders-btn" class="p-6 rounded-xl shadow-lg font-bold text-white text-lg" style="background-color: var(--secondary);"> 📋 Order List </button> <button id="analytics-btn" class="p-6 rounded-xl shadow-lg font-bold text-white text-lg bg-purple-500"> 📊 Analytics </button> <button id="email-btn" class="p-6 rounded-xl shadow-lg font-bold text-white text-lg bg-orange-500"> 📧 Send Email </button>
      </div><!-- Dashboard Stats -->
      <div id="dashboard" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -533,7 +517,6 @@
     ];
 
     let currentOrders = [];
-    let currentUser = null;
     let currentChart = null;
     let currentLanguage = 'en';
     let emailConfig = { sender: '', recipient: '' };
@@ -576,9 +559,9 @@
       // Untuk DN 33-35: target 35
       if (newDN >= 33 && newDN <= 35) return 35;
       
-      // Untuk DN > 35: bulatkan ke kelipatan 5 terdekat ke atas
+      // Untuk DN > 35: bulatkan ke kelipatan 10 terdekat ke BAWAH
       if (newDN > 35) {
-        return Math.ceil(newDN / 5) * 5;
+        return Math.floor(newDN / 10) * 10;
       }
       
       return Math.ceil(newDN / 5) * 5;
@@ -1393,32 +1376,6 @@
     }
 
     function setupEventListeners() {
-      document.getElementById('login-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const username = document.getElementById('username').value;
-        
-        if (username) {
-          currentUser = username;
-          document.getElementById('login-screen').classList.add('hidden');
-          document.getElementById('main-header').classList.remove('hidden');
-          document.getElementById('main-content').classList.remove('hidden');
-          document.getElementById('logged-user').textContent = `Logged in as: ${currentUser}`;
-          showToast(`✅ Welcome, ${currentUser}!`);
-        } else {
-          showToast('❌ Please enter username', 'error');
-        }
-      });
-
-      document.getElementById('logout-btn').addEventListener('click', () => {
-        currentUser = null;
-        document.getElementById('login-screen').classList.remove('hidden');
-        document.getElementById('main-header').classList.add('hidden');
-        document.getElementById('main-content').classList.add('hidden');
-        document.getElementById('login-form').reset();
-        document.getElementById('username').value = 'IKK';
-        showToast('👋 Logged out successfully');
-      });
-
       document.getElementById('add-order-btn').addEventListener('click', () => {
         document.getElementById('add-order-modal').classList.remove('hidden');
         document.getElementById('order-date').valueAsDate = new Date();
@@ -2106,5 +2063,5 @@
 
     window.addEventListener('DOMContentLoaded', init);
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b2df73034cf3dce',t:'MTc2NjU1Njk0MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b2e3d86b03fdc19',t:'MTc2NjU1OTgyMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
