@@ -1,0 +1,2121 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DN Order Management - IKK</title>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getDatabase, ref, set, onValue, remove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+    import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js';
+    
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyAEZA47N7205zjQEKT2iSViQJvCwLEzusg",
+      authDomain: "dn-ikk.firebaseapp.com",
+      databaseURL: "https://dn-ikk-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "dn-ikk",
+      storageBucket: "dn-ikk.firebasestorage.app",
+      messagingSenderId: "121412700238",
+      appId: "1:121412700238:web:598d91bcebc6976a615b1f",
+      measurementId: "G-6P6BVH3XQB"
+    };
+    
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    window.firebaseDB = getDatabase(app);
+    window.firebaseRef = ref;
+    window.firebaseSet = set;
+    window.firebaseOnValue = onValue;
+    window.firebaseRemove = remove;
+  </script>
+  <style>
+    body {
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    
+    .theme-blue {
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --secondary: #10b981;
+      --background: #f0f9ff;
+      --surface: #ffffff;
+      --text: #1e293b;
+      --text-secondary: #64748b;
+    }
+    
+    .theme-green {
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --secondary: #3b82f6;
+      --background: #f0fdf4;
+      --surface: #ffffff;
+      --text: #1e293b;
+      --text-secondary: #64748b;
+    }
+    
+    .theme-purple {
+      --primary: #8b5cf6;
+      --primary-dark: #7c3aed;
+      --secondary: #ec4899;
+      --background: #faf5ff;
+      --surface: #ffffff;
+      --text: #1e293b;
+      --text-secondary: #64748b;
+    }
+    
+    .theme-orange {
+      --primary: #f97316;
+      --primary-dark: #ea580c;
+      --secondary: #06b6d4;
+      --background: #fff7ed;
+      --surface: #ffffff;
+      --text: #1e293b;
+      --text-secondary: #64748b;
+    }
+    
+    * {
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #print-area, #print-area * {
+        visibility: visible;
+      }
+      #print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full theme-blue" style="background-color: var(--background); color: var(--text);">
+  <div class="h-full w-full overflow-auto">
+   <div class="min-h-full"><!-- Login Screen -->
+    <div id="login-screen" class="flex items-center justify-center min-h-screen px-4">
+     <div class="w-full max-w-md p-8 rounded-2xl shadow-2xl" style="background-color: var(--surface);">
+      <div class="text-center mb-8">
+       <div class="text-6xl mb-4">
+        🔐
+       </div>
+       <h2 class="text-3xl font-bold mb-2" style="color: var(--primary);">DN ORDER IKK</h2>
+       <p class="text-lg" style="color: var(--text-secondary);">INDAH KIAT KARAWANG</p>
+      </div>
+      <form id="login-form" class="space-y-4">
+       <div><label for="username" class="block text-sm font-medium mb-2">Username</label> <input type="text" id="username" value="IKK" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2" style="border-color: var(--text-secondary); background-color: var(--background);">
+       </div>
+       <div><label for="password" class="block text-sm font-medium mb-2">Password</label> <input type="password" id="password" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2" style="border-color: var(--text-secondary); background-color: var(--background);">
+       </div>
+       <div><label for="created-by-name" class="block text-sm font-medium mb-2">Your Name (Created By)</label> <input type="text" id="created-by-name" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2" style="border-color: var(--text-secondary); background-color: var(--background);" placeholder="Enter your name">
+       </div><button type="submit" class="w-full py-3 rounded-lg font-bold text-white shadow-lg" style="background-color: var(--primary);"> Login </button>
+      </form>
+     </div>
+    </div><!-- Header -->
+    <header id="main-header" class="hidden shadow-md" style="background-color: var(--surface);">
+     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex justify-between items-center">
+       <div>
+        <h1 id="app-title" class="text-3xl font-bold" style="color: var(--primary);">DN ORDER IKK</h1>
+        <p id="company-name" class="text-sm mt-1" style="color: var(--text-secondary);">INDAH KIAT KARAWANG</p>
+        <p id="logged-user" class="text-xs mt-1 font-medium" style="color: var(--secondary);"></p>
+        <div class="flex items-center gap-2 mt-2"><span id="online-status" class="flex items-center gap-2 text-sm font-medium"> <span id="status-dot" class="w-3 h-3 rounded-full bg-green-500"></span> <span id="status-text">Online</span> </span> <span id="sync-status" class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800 hidden"> 🔄 Syncing... </span>
+        </div>
+       </div>
+       <div class="flex gap-3"><button id="calendar-btn" class="px-4 py-2 rounded-lg font-medium shadow-sm" style="background-color: var(--primary); color: white;"> 📅 Calendar </button> <button id="settings-btn" class="px-4 py-2 rounded-lg font-medium shadow-sm" style="background-color: var(--secondary); color: white;"> ⚙️ Settings </button> <button id="logout-btn" class="px-4 py-2 rounded-lg font-medium shadow-sm bg-red-500 text-white"> 🚪 Logout </button>
+       </div>
+      </div><!-- Summary Tables -->
+      <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6"><!-- BU 17 Summary -->
+       <div class="p-6 rounded-xl shadow-lg" style="background-color: var(--surface);">
+        <h3 class="text-xl font-bold mb-4" style="color: var(--primary);">📊 Internal (BU 17) Summary</h3>
+        <div class="overflow-x-auto">
+         <table class="w-full text-sm">
+          <thead style="background-color: var(--background);">
+           <tr>
+            <th class="px-3 py-2 text-left font-semibold">Customer</th>
+            <th class="px-3 py-2 text-left font-semibold">Destination</th>
+            <th class="px-3 py-2 text-right font-semibold">Total DN</th>
+           </tr>
+          </thead>
+          <tbody id="header-bu17-summary-tbody">
+          </tbody>
+          <tfoot style="background-color: var(--background);" class="font-bold">
+           <tr>
+            <td colspan="2" class="px-3 py-2">Total BU 17:</td>
+            <td class="px-3 py-2 text-right" id="header-bu17-grand-total">0</td>
+           </tr>
+          </tfoot>
+         </table>
+        </div>
+       </div><!-- CMI Summary -->
+       <div class="p-6 rounded-xl shadow-lg" style="background-color: var(--surface);">
+        <h3 class="text-xl font-bold mb-4" style="color: var(--secondary);">📊 External (CMI) Summary</h3>
+        <div class="overflow-x-auto">
+         <table class="w-full text-sm">
+          <thead style="background-color: var(--background);">
+           <tr>
+            <th class="px-3 py-2 text-left font-semibold">Customer</th>
+            <th class="px-3 py-2 text-left font-semibold">City</th>
+            <th class="px-3 py-2 text-right font-semibold">Total DN</th>
+           </tr>
+          </thead>
+          <tbody id="header-cmi-summary-tbody">
+          </tbody>
+          <tfoot style="background-color: var(--background);" class="font-bold">
+           <tr>
+            <td colspan="2" class="px-3 py-2">Total CMI:</td>
+            <td class="px-3 py-2 text-right" id="header-cmi-grand-total">0</td>
+           </tr>
+          </tfoot>
+         </table>
+        </div>
+       </div>
+      </div><!-- Grand Total -->
+      <div class="mt-6 p-6 rounded-xl shadow-lg text-center" style="background-color: var(--surface);">
+       <h3 class="text-2xl font-bold mb-2" style="color: var(--primary);">🎯 Grand Total DN</h3>
+       <p id="header-overall-grand-total" class="text-5xl font-bold" style="color: var(--secondary);">0</p>
+       <p class="text-sm mt-2" style="color: var(--text-secondary);">Combined BU 17 + CMI</p>
+      </div>
+     </div>
+    </header><!-- Main Content -->
+    <main id="main-content" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"><!-- Quick Actions -->
+     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"><button id="add-order-btn" class="p-6 rounded-xl shadow-lg font-bold text-white text-lg" style="background-color: var(--primary);"> ➕ Add Order </button> <button id="view-orders-btn" class="p-6 rounded-xl shadow-lg font-bold text-white text-lg" style="background-color: var(--secondary);"> 📋 Order List </button> <button id="analytics-btn" class="p-6 rounded-xl shadow-lg font-bold text-white text-lg bg-purple-500"> 📊 Analytics </button> <button id="email-btn" class="p-6 rounded-xl shadow-lg font-bold text-white text-lg bg-orange-500"> 📧 Send Email </button>
+     </div><!-- Dashboard Stats -->
+     <div id="dashboard" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="p-6 rounded-xl shadow-lg" style="background-color: var(--surface);">
+       <h3 class="text-sm font-medium mb-2" style="color: var(--text-secondary);">Total Orders</h3>
+       <p id="total-orders" class="text-3xl font-bold" style="color: var(--primary);">0</p>
+      </div>
+      <div class="p-6 rounded-xl shadow-lg" style="background-color: var(--surface);">
+       <h3 class="text-sm font-medium mb-2" style="color: var(--text-secondary);">Completed</h3>
+       <p id="completed-orders" class="text-3xl font-bold text-green-500">0</p>
+      </div>
+      <div class="p-6 rounded-xl shadow-lg" style="background-color: var(--surface);">
+       <h3 class="text-sm font-medium mb-2" style="color: var(--text-secondary);">Pending</h3>
+       <p id="pending-orders" class="text-3xl font-bold text-orange-500">0</p>
+      </div>
+     </div><!-- Order List View -->
+     <div id="order-list-view" class="hidden rounded-xl shadow-lg p-6 mb-8" style="background-color: var(--surface);">
+      <div class="flex justify-between items-center mb-6 flex-wrap gap-3">
+       <h2 class="text-2xl font-bold" style="color: var(--primary);">📋 Order List</h2>
+       <div class="flex gap-3 flex-wrap"><input type="month" id="month-filter" class="px-4 py-2 border rounded-lg" style="border-color: var(--text-secondary);"> <button id="print-preview-btn" class="px-4 py-2 rounded-lg font-medium text-white bg-indigo-500">👁️ Print Preview</button> <button id="export-pdf-btn" class="px-4 py-2 rounded-lg font-medium text-white" style="background-color: var(--primary);">📄 PDF</button> <button id="export-excel-btn" class="px-4 py-2 rounded-lg font-medium text-white bg-green-500">📊 Excel</button> <button id="export-doc-btn" class="px-4 py-2 rounded-lg font-medium text-white bg-blue-600">📝 DOC</button> <button id="export-jpg-btn" class="px-4 py-2 rounded-lg font-medium text-white bg-yellow-500">🖼️ JPG</button> <button id="export-png-btn" class="px-4 py-2 rounded-lg font-medium text-white bg-pink-500">🖼️ PNG</button> <button id="print-btn" class="px-4 py-2 rounded-lg font-medium text-white bg-purple-500">🖨️ Print</button>
+       </div>
+      </div>
+      <div class="overflow-x-auto">
+       <table class="w-full" id="orders-table">
+        <thead style="background-color: var(--background);">
+         <tr>
+          <th class="px-4 py-3 text-left text-sm font-semibold">✓</th>
+          <th class="px-4 py-3 text-left text-sm font-semibold">Customer</th>
+          <th class="px-4 py-3 text-left text-sm font-semibold">Destination</th>
+          <th class="px-4 py-3 text-left text-sm font-semibold">Target DN</th>
+          <th class="px-4 py-3 text-left text-sm font-semibold">New DN</th>
+          <th class="px-4 py-3 text-left text-sm font-semibold">Date</th>
+          <th class="px-4 py-3 text-left text-sm font-semibold">Created By</th>
+          <th class="px-4 py-3 text-left text-sm font-semibold">Actions</th>
+         </tr>
+        </thead>
+        <tbody id="orders-tbody">
+        </tbody>
+       </table>
+      </div>
+      <div class="mt-6 p-4 rounded-lg" style="background-color: var(--background);">
+       <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div>
+         <p class="text-sm font-medium" style="color: var(--text-secondary);">Total CMI:</p>
+         <p id="total-cmi" class="text-2xl font-bold" style="color: var(--primary);">0</p>
+        </div>
+        <div>
+         <p class="text-sm font-medium" style="color: var(--text-secondary);">Total BU 17:</p>
+         <p id="total-bu17" class="text-2xl font-bold" style="color: var(--secondary);">0</p>
+        </div>
+        <div>
+         <p class="text-sm font-medium" style="color: var(--text-secondary);">Total New DN:</p>
+         <p id="total-new-dn" class="text-2xl font-bold text-purple-600">0</p>
+        </div>
+       </div>
+      </div><!-- Summary Tables -->
+      <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6"><!-- BU 17 Summary -->
+       <div class="p-6 rounded-xl shadow-lg" style="background-color: var(--surface);">
+        <h3 class="text-xl font-bold mb-4" style="color: var(--primary);">📊 Internal (BU 17) Summary</h3>
+        <div class="overflow-x-auto">
+         <table class="w-full text-sm">
+          <thead style="background-color: var(--background);">
+           <tr>
+            <th class="px-3 py-2 text-left font-semibold">Customer</th>
+            <th class="px-3 py-2 text-left font-semibold">Destination</th>
+            <th class="px-3 py-2 text-right font-semibold">Total DN</th>
+           </tr>
+          </thead>
+          <tbody id="bu17-summary-tbody">
+          </tbody>
+          <tfoot style="background-color: var(--background);" class="font-bold">
+           <tr>
+            <td colspan="2" class="px-3 py-2">Total BU 17:</td>
+            <td class="px-3 py-2 text-right" id="bu17-grand-total">0</td>
+           </tr>
+          </tfoot>
+         </table>
+        </div>
+       </div><!-- CMI Summary -->
+       <div class="p-6 rounded-xl shadow-lg" style="background-color: var(--surface);">
+        <h3 class="text-xl font-bold mb-4" style="color: var(--secondary);">📊 External (CMI) Summary</h3>
+        <div class="overflow-x-auto">
+         <table class="w-full text-sm">
+          <thead style="background-color: var(--background);">
+           <tr>
+            <th class="px-3 py-2 text-left font-semibold">Customer</th>
+            <th class="px-3 py-2 text-left font-semibold">City</th>
+            <th class="px-3 py-2 text-right font-semibold">Total DN</th>
+           </tr>
+          </thead>
+          <tbody id="cmi-summary-tbody">
+          </tbody>
+          <tfoot style="background-color: var(--background);" class="font-bold">
+           <tr>
+            <td colspan="2" class="px-3 py-2">Total CMI:</td>
+            <td class="px-3 py-2 text-right" id="cmi-grand-total">0</td>
+           </tr>
+          </tfoot>
+         </table>
+        </div>
+       </div>
+      </div><!-- Grand Total -->
+      <div class="mt-6 p-6 rounded-xl shadow-lg text-center" style="background-color: var(--surface);">
+       <h3 class="text-2xl font-bold mb-2" style="color: var(--primary);">🎯 Grand Total DN</h3>
+       <p id="overall-grand-total" class="text-5xl font-bold" style="color: var(--secondary);">0</p>
+       <p class="text-sm mt-2" style="color: var(--text-secondary);">Combined BU 17 + CMI</p>
+      </div>
+     </div><!-- Analytics View -->
+     <div id="analytics-view" class="hidden rounded-xl shadow-lg p-6" style="background-color: var(--surface);">
+      <div class="flex justify-between items-center mb-6 flex-wrap gap-3">
+       <h2 class="text-2xl font-bold" style="color: var(--primary);">📊 Top Customers Analytics</h2>
+       <div class="flex gap-3 flex-wrap"><select id="analytics-period" class="px-4 py-2 border rounded-lg" style="border-color: var(--text-secondary);"> <option value="monthly">Monthly</option> <option value="yearly">Yearly</option> </select> <input type="month" id="analytics-month-filter" class="px-4 py-2 border rounded-lg" style="border-color: var(--text-secondary);"> <select id="analytics-sort" class="px-4 py-2 border rounded-lg" style="border-color: var(--text-secondary);"> <option value="highest">Highest DN</option> <option value="lowest">Lowest DN</option> </select> <select id="chart-type" class="px-4 py-2 border rounded-lg" style="border-color: var(--text-secondary);"> <option value="bar">Bar Chart</option> <option value="line">Line Chart</option> </select> <button id="download-chart-pdf" class="px-4 py-2 rounded-lg font-medium text-white" style="background-color: var(--primary);">📄 PDF</button> <button id="download-chart-excel" class="px-4 py-2 rounded-lg font-medium text-white bg-green-500">   Excel</button> <button id="download-chart-jpg" class="px-4 py-2 rounded-lg font-medium text-white bg-blue-500">🖼️ JPG</button> <button id="download-chart-png" class="px-4 py-2 rounded-lg font-medium text-white bg-purple-500">🖼️ PNG</button>
+       </div>
+      </div>
+      <div class="bg-white p-4 rounded-lg">
+       <canvas id="analytics-chart" style="max-height: 400px;"></canvas>
+      </div>
+     </div>
+    </main><!-- Add Order Modal -->
+    <div id="add-order-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto p-4">
+     <div class="w-full max-w-2xl p-8 rounded-2xl shadow-2xl max-h-screen overflow-y-auto" style="background-color: var(--surface);">
+      <h2 class="text-2xl font-bold mb-6" style="color: var(--primary);">➕ Add New Order</h2>
+      <form id="add-order-form" class="space-y-4">
+       <div><label for="order-destination" class="block text-sm font-medium mb-2">Destination Type *</label> <select id="order-destination" required class="w-full px-4 py-2 border rounded-lg" style="border-color: var(--text-secondary); background-color: var(--background);"> <option value="">Choose Internal or External</option> <option value="BU 17">Internal (BU 17)</option> <option value="CMI">External (CMI)</option> </select>
+       </div>
+       <div><label for="order-customer" class="block text-sm font-medium mb-2">Customer Name *</label> <select id="order-customer" required class="w-full px-4 py-2 border rounded-lg" style="border-color: var(--text-secondary); background-color: var(--background);"> <option value="">Choose Internal or External First</option> </select>
+       </div>
+       <div><label for="order-new-dn" class="block text-sm font-medium mb-2">New DN *</label> <input type="number" id="order-new-dn" required class="w-full px-4 py-2 border rounded-lg" style="border-color: var(--text-secondary); background-color: var(--background);" placeholder="Enter DN quantity">
+       </div>
+       <div><label for="order-target-dn" class="block text-sm font-medium mb-2">Target DN (Auto-calculated)</label> <input type="number" id="order-target-dn" readonly class="w-full px-4 py-2 border rounded-lg bg-gray-100" style="border-color: var(--text-secondary);">
+       </div>
+       <div><label for="order-date" class="block text-sm font-medium mb-2">Order Date *</label> <input type="date" id="order-date" required class="w-full px-4 py-2 border rounded-lg" style="border-color: var(--text-secondary); background-color: var(--background);">
+        <p id="holiday-warning" class="text-sm mt-1 text-red-600 font-medium hidden">⚠️ This date is a weekend or national holiday!</p>
+       </div>
+       <div class="flex gap-3 pt-4"><button type="submit" id="submit-order-btn" class="flex-1 py-3 rounded-lg font-bold text-white" style="background-color: var(--primary);"> <span id="submit-text">Add Order</span> </button> <button type="button" id="cancel-order-btn" class="flex-1 py-3 rounded-lg font-bold bg-gray-400 text-white"> Cancel </button>
+       </div>
+      </form>
+     </div>
+    </div><!-- Calendar Modal -->
+    <div id="calendar-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+     <div class="w-full max-w-4xl p-8 rounded-2xl shadow-2xl" style="background-color: var(--surface);">
+      <div class="flex justify-between items-center mb-6">
+       <h2 class="text-2xl font-bold" style="color: var(--primary);">     Calendar</h2><button id="close-calendar" class="text-2xl">×</button>
+      </div>
+      <div class="flex justify-between items-center mb-4"><button id="prev-month" class="px-4 py-2 rounded-lg" style="background-color: var(--primary); color: white;">← Prev</button>
+       <h3 id="calendar-month-year" class="text-xl font-bold"></h3><button id="next-month" class="px-4 py-2 rounded-lg" style="background-color: var(--primary); color: white;">Next →</button>
+      </div>
+      <div id="calendar-grid" class="grid grid-cols-7 gap-2">
+      </div>
+     </div>
+    </div><!-- Settings Modal -->
+    <div id="settings-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto p-4">
+     <div class="w-full max-w-4xl p-8 rounded-2xl shadow-2xl max-h-screen overflow-y-auto" style="background-color: var(--surface);">
+      <h2 class="text-2xl font-bold mb-6" style="color: var(--primary);">⚙️ Settings</h2><!-- Theme Settings -->
+      <div class="mb-6">
+       <h3 class="text-lg font-bold mb-3">🎨 Theme</h3>
+       <div class="grid grid-cols-2 md:grid-cols-4 gap-3"><button class="theme-option px-4 py-3 rounded-lg border-2 font-medium" data-theme="blue" style="border-color: #3b82f6; background-color: #eff6ff;"> Blue </button> <button class="theme-option px-4 py-3 rounded-lg border-2 font-medium" data-theme="green" style="border-color: #10b981; background-color: #f0fdf4;"> Green </button> <button class="theme-option px-4 py-3 rounded-lg border-2 font-medium" data-theme="purple" style="border-color: #8b5cf6; background-color: #faf5ff;"> Purple </button> <button class="theme-option px-4 py-3 rounded-lg border-2 font-medium" data-theme="orange" style="border-color: #f97316; background-color: #fff7ed;"> Orange </button>
+       </div>
+      </div><!-- Language Settings -->
+      <div class="mb-6">
+       <h3 class="text-lg font-bold mb-3">🌐 Language</h3><select id="language-select" class="w-full px-4 py-2 border rounded-lg" style="border-color: var(--text-secondary); background-color: var(--background);"> <option value="en">English</option> <option value="id">Bahasa Indonesia</option> <option value="ko">   국어 (Korean)</option> <option value="ja">日本語 (Japanese)</option> </select>
+      </div><!-- Customer Management Tabs -->
+      <div class="mb-6">
+       <h3 class="text-lg font-bold mb-3">👥 Customer Management</h3>
+       <div class="flex gap-2 mb-4"><button id="tab-cmi" class="flex-1 py-2 rounded-lg font-medium" style="background-color: var(--primary); color: white;"> CMI Customers </button> <button id="tab-bu17" class="flex-1 py-2 rounded-lg font-medium bg-gray-300"> BU 17 Customers </button>
+       </div><!-- CMI Customers -->
+       <div id="cmi-customers-section">
+        <form id="add-cmi-customer-form" class="space-y-3 mb-4"><input type="text" id="new-cmi-customer" placeholder="Customer Name" required class="w-full px-4 py-2 border rounded-lg" style="border-color: var(--text-secondary); background-color: var(--background);"> <input type="text" id="new-cmi-city" placeholder="City" required class="w-full px-4 py-2 border rounded-lg" style="border-color: var(--text-secondary); background-color: var(--background);"> <button type="submit" class="w-full py-2 rounded-lg font-medium text-white" style="background-color: var(--primary);"> Add CMI Customer </button>
+        </form>
+        <div id="cmi-customer-list" class="space-y-2 max-h-64 overflow-y-auto">
+        </div>
+       </div><!-- BU 17 Customers -->
+       <div id="bu17-customers-section" class="hidden">
+        <form id="add-bu17-customer-form" class="space-y-3 mb-4"><input type="text" id="new-bu17-customer" placeholder="Customer Name" required class="w-full px-4 py-2 border rounded-lg" style="border-color: var(--text-secondary); background-color: var(--background);"> <input type="text" id="new-bu17-destination" placeholder="Destination" required class="w-full px-4 py-2 border rounded-lg" style="border-color: var(--text-secondary); background-color: var(--background);"> <button type="submit" class="w-full py-2 rounded-lg font-medium text-white" style="background-color: var(--secondary);"> Add BU 17 Customer </button>
+        </form>
+        <div id="bu17-customer-list" class="space-y-2 max-h-64 overflow-y-auto">
+        </div>
+       </div>
+      </div><!-- Email Settings -->
+      <div class="mb-6">
+       <h3 class="text-lg font-bold mb-3">📧 Email Configuration</h3>
+       <form id="email-config-form" class="space-y-3">
+        <div><label class="block text-sm font-medium mb-1">Sender Email</label> <input type="email" id="sender-email" placeholder="sender@example.com" class="w-full px-4 py-2 border rounded-lg" style="border-color: var(--text-secondary); background-color: var(--background);">
+        </div>
+        <div><label class="block text-sm font-medium mb-1">Recipient Email</label> <input type="email" id="recipient-email" placeholder="recipient@example.com" class="w-full px-4 py-2 border rounded-lg" style="border-color: var(--text-secondary); background-color: var(--background);">
+        </div><button type="submit" class="w-full py-2 rounded-lg font-medium text-white" style="background-color: var(--secondary);"> Save Email Settings </button>
+       </form>
+      </div><button id="close-settings" class="w-full py-3 rounded-lg font-bold text-white" style="background-color: var(--primary);"> Close </button>
+     </div>
+    </div><!-- Email Modal -->
+    <div id="email-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+     <div class="w-full max-w-2xl p-8 rounded-2xl shadow-2xl max-h-screen overflow-y-auto" style="background-color: var(--surface);">
+      <h2 class="text-2xl font-bold mb-6" style="color: var(--primary);">📧 Send Email Report</h2>
+      <form id="send-email-form" class="space-y-4">
+       <div><label class="block text-sm font-medium mb-2">To: *</label> <input type="email" id="email-to" required class="w-full px-4 py-2 border rounded-lg" style="border-color: var(--text-secondary); background-color: var(--background);" placeholder="recipient@example.com">
+       </div>
+       <div><label class="block text-sm font-medium mb-2">CC: (Optional - separate multiple emails with comma)</label> <input type="text" id="email-cc" class="w-full px-4 py-2 border rounded-lg" style="border-color: var(--text-secondary); background-color: var(--background);" placeholder="cc1@example.com, cc2@example.com">
+       </div>
+       <div><label class="block text-sm font-medium mb-2">Subject:</label> <input type="text" id="email-subject" value="DN Order Report - IKK" required class="w-full px-4 py-2 border rounded-lg" style="border-color: var(--text-secondary); background-color: var(--background);">
+       </div>
+       <div><label class="block text-sm font-medium mb-2">Message:</label> <textarea id="email-message" rows="6" class="w-full px-4 py-2 border rounded-lg" style="border-color: var(--text-secondary); background-color: var(--background);">Please find the attached DN order report with complete order list and analytics.</textarea>
+       </div>
+       <div class="p-4 rounded-lg border-2" style="border-color: var(--primary); background-color: var(--background);">
+        <p class="text-sm font-bold mb-2">📎 Auto-Attached Summary:</p>
+        <ul class="text-sm space-y-1" style="color: var(--text-secondary);">
+         <li>✅ Complete Order List (<span id="email-order-count">0</span> orders)</li>
+         <li>✅ Internal BU 17 Summary (Total: <span id="email-bu17-total">0</span> DN)</li>
+         <li>✅ External CMI Summary (Total: <span id="email-cmi-total">0</span> DN)</li>
+         <li>✅ Grand Total DN: <span id="email-grand-total">0</span></li>
+        </ul>
+        <p class="text-xs mt-2 italic" style="color: var(--text-secondary);">Summary updates automatically when orders are edited or deleted</p>
+       </div>
+       <div><button type="button" id="preview-email-btn" class="w-full py-2 rounded-lg font-medium text-white bg-purple-500 mb-2"> 👁️ Preview Email Content </button>
+       </div>
+       <div class="flex gap-3"><button type="submit" class="flex-1 py-3 rounded-lg font-bold text-white" style="background-color: var(--primary);"> 📧 Send Email </button> <button type="button" id="close-email" class="flex-1 py-3 rounded-lg font-bold bg-gray-400 text-white"> Cancel </button>
+       </div>
+      </form>
+      <div id="email-status" class="mt-4 p-4 rounded-lg hidden"></div>
+     </div>
+    </div><!-- Email Preview Modal -->
+    <div id="email-preview-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+     <div class="w-full max-w-4xl p-8 rounded-2xl shadow-2xl max-h-screen overflow-y-auto" style="background-color: var(--surface);">
+      <div class="flex justify-between items-center mb-6">
+       <h2 class="text-2xl font-bold" style="color: var(--primary);">📧 Email Preview</h2><button id="close-email-preview" class="text-2xl">×</button>
+      </div>
+      <div id="email-preview-content" class="border rounded-lg p-6" style="border-color: var(--text-secondary); background-color: var(--background);">
+      </div>
+     </div>
+    </div><!-- Calendar Day Actions Modal -->
+    <div id="calendar-day-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+     <div class="w-full max-w-4xl p-8 rounded-2xl shadow-2xl max-h-screen overflow-y-auto" style="background-color: var(--surface);">
+      <div class="flex justify-between items-center mb-6">
+       <h2 class="text-2xl font-bold" style="color: var(--primary);">📅 Orders for <span id="calendar-day-date"></span></h2><button id="close-calendar-day" class="text-2xl">×</button>
+      </div>
+      <div id="calendar-day-orders" class="space-y-3">
+      </div>
+     </div>
+    </div><!-- Print Preview Area -->
+    <div id="print-area" class="hidden">
+     <div style="padding: 20px; font-family: Arial, sans-serif;">
+      <h1 style="text-align: center; color: #3b82f6;">DN ORDER IKK - INDAH KIAT KARAWANG</h1>
+      <h2 style="text-align: center; margin-bottom: 30px;">Order Report</h2>
+      <div id="print-content"></div>
+      <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #ccc;">
+       <p style="font-size: 12px; color: #666;">Created by: <span id="print-created-by"></span></p>
+       <p style="font-size: 12px; color: #666;">Generated on: <span id="print-date"></span></p>
+      </div>
+     </div>
+    </div><!-- Print Preview Modal -->
+    <div id="print-preview-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+     <div class="w-full max-w-6xl h-5/6 bg-white rounded-2xl shadow-2xl flex flex-col">
+      <div class="flex justify-between items-center p-6 border-b">
+       <h2 class="text-2xl font-bold" style="color: var(--primary);">🖨️ Print Preview</h2>
+       <div class="flex gap-3"><button id="preview-print-btn" class="px-4 py-2 rounded-lg font-medium text-white bg-purple-500">🖨️ Print Now</button> <button id="close-print-preview" class="px-4 py-2 rounded-lg font-medium bg-gray-400 text-white">Close</button>
+       </div>
+      </div>
+      <div id="print-preview-content" class="flex-1 overflow-auto p-6" style="background-color: #f5f5f5;">
+      </div>
+     </div>
+    </div><!-- Toast Notifications -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2">
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      app_title: 'DN ORDER IKK',
+      company_name: 'INDAH KIAT KARAWANG',
+      theme: 'blue',
+      language: 'en',
+      primary_color: '#3b82f6',
+      secondary_color: '#10b981',
+      background_color: '#f0f9ff',
+      surface_color: '#ffffff',
+      text_color: '#1e293b'
+    };
+
+    const cmiCustomers = [
+      { name: 'CIPTA MULTI BUANA PERKASA, PT', city: 'JAKARTA BARAT' },
+      { name: 'DAYACIPTA KEMASINDO, PT (GD) CIBITUNG', city: 'Bekasi Timur' },
+      { name: 'PT DAYACIPTA KEMASINDO', city: 'KOTA TANGERANG BANTEN' },
+      { name: 'PT. HEXA PRIMA PERSADA', city: 'TANGERANG' },
+      { name: 'SENTRALINDO TEGUH GEMILANG, PT (GD)', city: 'CIKARANG' },
+      { name: 'PT SENTRALINDO TEGUH GEMILANG', city: 'BEKASI' },
+      { name: 'PT. TRISTAR MAKMUR KARTONINDO, GD', city: 'CIKARANG PUSAT - BEKASI' },
+      { name: 'DAYACIPTA KEMASINDO, PT (GD) KARAWANG', city: 'Karawang' },
+      { name: 'PT PANCAMITRA PACKINDO', city: 'TANGERANG BANTEN' },
+      { name: 'MULTI ARTHA ABADI, PT', city: 'TANGERANG' },
+      { name: 'PT. KEMASAN INDAH SEJAHTERA', city: 'BANTEN' },
+      { name: 'PT ADINA MULTI WAHANA', city: 'KOTA TANGERANG BANTEN' },
+      { name: 'SETIAJAYA KEMASINDO MADYA, PT', city: 'KOTA TANGERANG' },
+      { name: 'PT.MODERN MULTI KEMASINDO', city: 'TANGERANG' },
+      { name: 'PT. GLOBAL PAPYRUS SEMESTA', city: 'BANDUNG' },
+      { name: 'PT. GLOBAL PAPYRUS SEMESTA', city: 'JAKARTA BARAT' },
+      { name: 'PT.OJI SINAR MAS PACKAGING', city: 'CIKARANG PUSAT.KAB BEKASI' },
+      { name: 'MULTIBOX INDAH, PT', city: 'DESA KAREO-TANGERANG' },
+      { name: 'PT KARYA INDAH MULTIGUNA', city: 'KOTA BEKASI JAWA BARAT' },
+      { name: 'PT. PUTRA UNIVERSAL CORRUGATED', city: 'TANGERANG' },
+      { name: 'PT.CARTONINDUS SUMBERJAYA', city: 'BANTEN' },
+      { name: 'PT MALINDO IRFAN / BEKASI', city: 'BEKASI' },
+      { name: 'PT. SATYAMITRA KEMAS LESTARI TBK', city: 'TANGERANG' },
+      { name: 'PABOXIN,PT', city: 'JAWA TIMUR' },
+      { name: 'DEVASH SUKSES FOREVER', city: 'GRESIK' },
+      { name: 'PT QINGDA MASPION PAPER PRODUCTS', city: 'SIDOARJO' },
+      { name: 'PT. WIJAYA SANTOSA BOX', city: 'SIDOARJO' },
+      { name: 'PT. SARANA PACKAGING AGRAPANA (GD)', city: 'Lamongan' },
+      { name: 'PT.SANTOSO JAWI (GD)', city: 'SIDOARJO' },
+      { name: 'PT. ZINYANG INDONESIA', city: 'KAB.BOYOLALI' },
+      { name: 'SURYA PRIMA SEMESTA,PT', city: 'SIDOARJO' },
+      { name: 'PT. Cakrawala Cemerlang Box', city: 'Kab. Mojokerto' },
+      { name: 'PT. KEDAWUNG SETIA CORRUGATED CARTON BOX INDUSTRIAL', city: 'KARANGPILANG, SURABAYA' },
+      { name: 'PT.SENTRAL KEMASINDO TEGUH', city: 'GRESIK' },
+      { name: 'PT. KARYA WANGSA INVESTAMA', city: 'KAB. KENDAL JAWA TENGAH' },
+      { name: 'JAWASURYA KENCANAINDAH, PT', city: 'SEMARANG' },
+      { name: 'PT.ANUGRAH ANEKABOX', city: 'GRESIK' },
+      { name: 'PT SUPRACOR SEJAHTERA', city: 'MOJOKERTO' },
+      { name: 'PT. UNIVERSAL JASA KEMAS (GD)', city: 'Pasuruan' },
+      { name: 'PT. UNIVERSAL JASA KEMAS', city: 'Pasuruan' },
+      { name: 'PT.MULIA GRAND MANUFACTURE', city: 'GRESIK' },
+      { name: 'PT.SURINDO TEGUH GEMILANG', city: 'GRESIK' },
+      { name: 'SURINDO TEGUH GEMILANG, PT (GD)', city: 'GRESIK' },
+      { name: 'PT. SARI INDAH PEMBUNGKUS INDUSTRI', city: 'MAKASSAR' },
+      { name: 'PT SINAR GARUDA MAKMURINDO', city: 'GRESIK' },
+      { name: 'PT.MITRACITRA MANDIRIOFFSET', city: 'SIDOARJO' },
+      { name: 'MITRACITRA MANDIRIOFFSET, PT (GD)', city: 'MOJOKERTO' }
+    ];
+
+    const bu17Customers = [
+      { name: 'APP Batam', destination: 'BATAM' },
+      { name: 'PEP Bawen', destination: 'BAWEN' },
+      { name: 'PEP Demak', destination: 'DEMAK' },
+      { name: 'PEP Bandung', destination: 'BANDUNG' },
+      { name: 'PEP Subang', destination: 'SUBANG / PURWAKARTA' },
+      { name: 'PD Karawang 3', destination: 'KARAWANG' },
+      { name: 'KKM Karawaci', destination: 'KARAWACI / TANGERANG' },
+      { name: 'KKM Cikarang', destination: 'CIKARANG UTARA' },
+      { name: 'KKM Medan (KKM 1)', destination: 'MEDAN' },
+      { name: 'KMA Lampung', destination: 'LAMPUNG' },
+      { name: 'PGC Bogor', destination: 'BOGOR' },
+      { name: 'Tjiwi Kimia', destination: 'MOJOKERTO' },
+      { name: 'KKM Medan (KKM 2)', destination: 'MEDAN' }
+    ];
+
+    let currentOrders = [];
+    let currentUser = null;
+    let currentChart = null;
+    let currentLanguage = 'en';
+    let emailConfig = { sender: '', recipient: '' };
+
+    const nationalHolidays = [
+      '2024-01-01', '2024-02-08', '2024-02-09', '2024-02-10', '2024-02-14', '2024-03-11', '2024-03-12',
+      '2024-03-28', '2024-03-29', '2024-04-10', '2024-04-11', '2024-05-01', '2024-05-09', '2024-05-10',
+      '2024-05-23', '2024-05-24', '2024-06-01', '2024-06-17', '2024-06-18', '2024-08-17', '2024-09-16',
+      '2024-12-25', '2024-12-26', '2025-01-01', '2025-01-29', '2025-01-30', '2025-01-31', '2025-03-29',
+      '2025-03-30', '2025-03-31', '2025-04-18', '2025-05-01', '2025-05-12', '2025-05-29', '2025-06-01',
+      '2025-06-05', '2025-06-06', '2025-08-17', '2025-09-04', '2025-12-25'
+    ];
+
+    function isHoliday(dateString) {
+      const date = new Date(dateString);
+      const dayOfWeek = date.getDay();
+      if (dayOfWeek === 0 || dayOfWeek === 6) return true;
+      if (nationalHolidays.includes(dateString)) return true;
+      return false;
+    }
+
+    function calculateTargetDN(newDN) {
+      // Untuk DN 1-20: bulatkan ke kelipatan 5 terdekat ke atas
+      if (newDN <= 20) {
+        return Math.ceil(newDN / 5) * 5;
+      }
+      
+      // Untuk DN 21-22: target 20
+      if (newDN >= 21 && newDN <= 22) return 20;
+      
+      // Untuk DN 23-25: target 25
+      if (newDN >= 23 && newDN <= 25) return 25;
+      
+      // Untuk DN 26-30: target 30
+      if (newDN >= 26 && newDN <= 30) return 30;
+      
+      // Untuk DN 31-32: target 30
+      if (newDN >= 31 && newDN <= 32) return 30;
+      
+      // Untuk DN 33-35: target 35
+      if (newDN >= 33 && newDN <= 35) return 35;
+      
+      // Untuk DN > 35: bulatkan ke kelipatan 5 terdekat ke atas
+      if (newDN > 35) {
+        return Math.ceil(newDN / 5) * 5;
+      }
+      
+      return Math.ceil(newDN / 5) * 5;
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = `px-6 py-4 rounded-lg shadow-lg text-white font-medium ${type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'}`;
+      toast.textContent = message;
+      document.getElementById('toast-container').appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    function applyTheme(themeName) {
+      document.body.className = document.body.className.replace(/theme-\w+/, `theme-${themeName}`);
+      localStorage.setItem('selectedTheme', themeName);
+    }
+
+    function updateSummaryTables(orders) {
+      let totalCMI = 0;
+      let totalBU17 = 0;
+      const bu17Summary = {};
+      const cmiSummary = {};
+      
+      orders.forEach(order => {
+        if (order.destination === 'CMI') {
+          totalCMI += order.new_dn;
+          if (!cmiSummary[order.customer_name]) {
+            cmiSummary[order.customer_name] = { total: 0, location: '' };
+          }
+          cmiSummary[order.customer_name].total += order.new_dn;
+          const customer = cmiCustomers.find(c => c.name === order.customer_name);
+          if (customer) cmiSummary[order.customer_name].location = customer.city;
+        } else if (order.destination === 'BU 17') {
+          totalBU17 += order.new_dn;
+          if (!bu17Summary[order.customer_name]) {
+            bu17Summary[order.customer_name] = { total: 0, location: '' };
+          }
+          bu17Summary[order.customer_name].total += order.new_dn;
+          const customer = bu17Customers.find(c => c.name === order.customer_name);
+          if (customer) bu17Summary[order.customer_name].location = customer.destination;
+        }
+      });
+
+      // Update header tables
+      const headerBu17Tbody = document.getElementById('header-bu17-summary-tbody');
+      headerBu17Tbody.innerHTML = '';
+      Object.entries(bu17Summary).forEach(([customer, data]) => {
+        const row = document.createElement('tr');
+        row.className = 'border-b';
+        row.innerHTML = `
+          <td class="px-3 py-2">${customer}</td>
+          <td class="px-3 py-2 text-sm" style="color: var(--text-secondary);">${data.location}</td>
+          <td class="px-3 py-2 text-right font-bold">${data.total}</td>
+        `;
+        headerBu17Tbody.appendChild(row);
+      });
+      document.getElementById('header-bu17-grand-total').textContent = totalBU17;
+
+      const headerCmiTbody = document.getElementById('header-cmi-summary-tbody');
+      headerCmiTbody.innerHTML = '';
+      Object.entries(cmiSummary).forEach(([customer, data]) => {
+        const row = document.createElement('tr');
+        row.className = 'border-b';
+        row.innerHTML = `
+          <td class="px-3 py-2">${customer}</td>
+          <td class="px-3 py-2 text-sm" style="color: var(--text-secondary);">${data.location}</td>
+          <td class="px-3 py-2 text-right font-bold">${data.total}</td>
+        `;
+        headerCmiTbody.appendChild(row);
+      });
+      document.getElementById('header-cmi-grand-total').textContent = totalCMI;
+      document.getElementById('header-overall-grand-total').textContent = totalCMI + totalBU17;
+      
+      // Update email summary counts
+      document.getElementById('email-order-count').textContent = orders.length;
+      document.getElementById('email-bu17-total').textContent = totalBU17;
+      document.getElementById('email-cmi-total').textContent = totalCMI;
+      document.getElementById('email-grand-total').textContent = totalCMI + totalBU17;
+    }
+
+    function renderOrdersTable(orders) {
+      const tbody = document.getElementById('orders-tbody');
+      tbody.innerHTML = '';
+      
+      let totalCMI = 0;
+      let totalBU17 = 0;
+      let totalNewDN = 0;
+      const bu17Summary = {};
+      const cmiSummary = {};
+      
+      orders.forEach(order => {
+        const row = document.createElement('tr');
+        row.className = 'border-b hover:bg-opacity-50';
+        row.style.backgroundColor = 'var(--background)';
+        
+        if (order.destination === 'CMI') {
+          totalCMI += order.new_dn;
+          if (!cmiSummary[order.customer_name]) {
+            cmiSummary[order.customer_name] = { total: 0, location: '' };
+          }
+          cmiSummary[order.customer_name].total += order.new_dn;
+          const customer = cmiCustomers.find(c => c.name === order.customer_name);
+          if (customer) cmiSummary[order.customer_name].location = customer.city;
+        } else if (order.destination === 'BU 17') {
+          totalBU17 += order.new_dn;
+          if (!bu17Summary[order.customer_name]) {
+            bu17Summary[order.customer_name] = { total: 0, location: '' };
+          }
+          bu17Summary[order.customer_name].total += order.new_dn;
+          const customer = bu17Customers.find(c => c.name === order.customer_name);
+          if (customer) bu17Summary[order.customer_name].location = customer.destination;
+        }
+        totalNewDN += order.new_dn;
+        
+        row.innerHTML = `
+          <td class="px-4 py-3">
+            <input type="checkbox" ${order.completed ? 'checked' : ''} data-id="${order.__backendId}" class="order-checkbox w-5 h-5 cursor-pointer">
+          </td>
+          <td class="px-4 py-3 font-medium">${order.customer_name}</td>
+          <td class="px-4 py-3">
+            <span class="px-3 py-1 rounded-full text-sm font-medium ${order.destination === 'CMI' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}">
+              ${order.destination === 'CMI' ? 'External (CMI)' : 'Internal (BU 17)'}
+            </span>
+          </td>
+          <td class="px-4 py-3 font-bold">${order.target_dn}</td>
+          <td class="px-4 py-3 font-bold">${order.new_dn}</td>
+          <td class="px-4 py-3">${new Date(order.order_date).toLocaleDateString()}</td>
+          <td class="px-4 py-3 text-sm" style="color: var(--text-secondary);">${order.created_by || 'N/A'}</td>
+          <td class="px-4 py-3">
+            <button class="delete-btn px-3 py-1 bg-red-500 text-white rounded-lg" data-id="${order.__backendId}">🗑️</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+      
+      document.getElementById('total-cmi').textContent = totalCMI;
+      document.getElementById('total-bu17').textContent = totalBU17;
+      document.getElementById('total-new-dn').textContent = totalNewDN;
+      
+      const bu17SummaryTbody = document.getElementById('bu17-summary-tbody');
+      bu17SummaryTbody.innerHTML = '';
+      Object.entries(bu17Summary).forEach(([customer, data]) => {
+        const row = document.createElement('tr');
+        row.className = 'border-b';
+        row.innerHTML = `
+          <td class="px-3 py-2">${customer}</td>
+          <td class="px-3 py-2 text-sm" style="color: var(--text-secondary);">${data.location}</td>
+          <td class="px-3 py-2 text-right font-bold">${data.total}</td>
+        `;
+        bu17SummaryTbody.appendChild(row);
+      });
+      document.getElementById('bu17-grand-total').textContent = totalBU17;
+      
+      const cmiSummaryTbody = document.getElementById('cmi-summary-tbody');
+      cmiSummaryTbody.innerHTML = '';
+      Object.entries(cmiSummary).forEach(([customer, data]) => {
+        const row = document.createElement('tr');
+        row.className = 'border-b';
+        row.innerHTML = `
+          <td class="px-3 py-2">${customer}</td>
+          <td class="px-3 py-2 text-sm" style="color: var(--text-secondary);">${data.location}</td>
+          <td class="px-3 py-2 text-right font-bold">${data.total}</td>
+        `;
+        cmiSummaryTbody.appendChild(row);
+      });
+      document.getElementById('cmi-grand-total').textContent = totalCMI;
+      document.getElementById('overall-grand-total').textContent = totalNewDN;
+      
+      document.querySelectorAll('.order-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', async (e) => {
+          const orderId = e.target.dataset.id;
+          const order = currentOrders.find(o => o.__backendId === orderId);
+          if (order) {
+            const originalState = order.completed;
+            order.completed = e.target.checked;
+            
+            e.target.disabled = true;
+            const result = await window.dataSdk.update(order);
+            
+            if (result.isOk) {
+              showToast(e.target.checked ? '✅ Order completed!' : '⏳ Order marked as pending');
+              console.log('✅ Order status updated:', order.customer_name, '-', order.completed ? 'Completed' : 'Pending');
+              syncToFirebase();
+            } else {
+              // Revert jika gagal
+              order.completed = originalState;
+              e.target.checked = originalState;
+              showToast('❌ Failed to update status', 'error');
+              console.error('Status update failed:', result.error);
+            }
+            e.target.disabled = false;
+          }
+        });
+      });
+      
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const orderId = e.target.dataset.id;
+          const order = currentOrders.find(o => o.__backendId === orderId);
+          if (order) {
+            const confirmDiv = document.createElement('div');
+            confirmDiv.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            confirmDiv.innerHTML = `
+              <div class="bg-white p-6 rounded-xl shadow-2xl max-w-md">
+                <h3 class="text-xl font-bold mb-4" style="color: #ef4444;">⚠️ Confirm Delete</h3>
+                <p class="mb-2"><strong>Customer:</strong> ${order.customer_name}</p>
+                <p class="mb-2"><strong>Destination:</strong> ${order.destination}</p>
+                <p class="mb-2"><strong>New DN:</strong> ${order.new_dn}</p>
+                <p class="mb-6 text-sm" style="color: #666;">This action cannot be undone. The order will be deleted from both local storage and Firebase.</p>
+                <div class="flex gap-3">
+                  <button id="confirm-delete" class="flex-1 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600">🗑️ Delete</button>
+                  <button id="cancel-delete" class="flex-1 py-2 bg-gray-300 rounded-lg font-medium hover:bg-gray-400">Cancel</button>
+                </div>
+              </div>
+            `;
+            document.body.appendChild(confirmDiv);
+            
+            document.getElementById('confirm-delete').addEventListener('click', async () => {
+              const deleteBtn = document.getElementById('confirm-delete');
+              deleteBtn.disabled = true;
+              deleteBtn.textContent = 'Deleting...';
+              
+              const result = await window.dataSdk.delete(order);
+              if (result.isOk) {
+                showToast('🗑️ Order deleted successfully!');
+                syncToFirebase();
+                console.log('✅ Order deleted and synced to Firebase');
+              } else {
+                showToast('❌ Failed to delete order', 'error');
+                console.error('Delete failed:', result.error);
+              }
+              confirmDiv.remove();
+            });
+            
+            document.getElementById('cancel-delete').addEventListener('click', () => {
+              confirmDiv.remove();
+            });
+          }
+        });
+      });
+    }
+
+    function updateDashboard(orders) {
+      document.getElementById('total-orders').textContent = orders.length;
+      document.getElementById('completed-orders').textContent = orders.filter(o => o.completed).length;
+      document.getElementById('pending-orders').textContent = orders.filter(o => !o.completed).length;
+    }
+
+    function renderCalendar(year, month) {
+      const grid = document.getElementById('calendar-grid');
+      grid.innerHTML = '';
+      
+      const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      daysOfWeek.forEach(day => {
+        const dayHeader = document.createElement('div');
+        dayHeader.className = 'text-center font-bold py-2';
+        dayHeader.textContent = day;
+        grid.appendChild(dayHeader);
+      });
+      
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      
+      for (let i = 0; i < firstDay; i++) {
+        grid.appendChild(document.createElement('div'));
+      }
+      
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayCell = document.createElement('div');
+        dayCell.className = 'text-center p-3 rounded-lg cursor-pointer hover:bg-opacity-50';
+        dayCell.style.backgroundColor = 'var(--background)';
+        dayCell.textContent = day;
+        
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const date = new Date(year, month, day);
+        const dayOfWeek = date.getDay();
+        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+        const isNationalHoliday = nationalHolidays.includes(dateStr);
+        
+        // Warna merah untuk weekend dan hari libur nasional
+        if (isWeekend || isNationalHoliday) {
+          dayCell.style.backgroundColor = '#fee2e2';
+          dayCell.style.color = '#dc2626';
+          dayCell.style.fontWeight = 'bold';
+        }
+        
+        const hasOrders = currentOrders.some(o => o.order_date === dateStr);
+        
+        // Jika ada order, tampilkan dengan warna primary dan tambahkan tombol aksi
+        if (hasOrders) {
+          dayCell.style.backgroundColor = 'var(--primary)';
+          dayCell.style.color = 'white';
+          dayCell.style.fontWeight = 'bold';
+          dayCell.style.position = 'relative';
+          
+          // Tambahkan badge jumlah orders
+          const orderCount = currentOrders.filter(o => o.order_date === dateStr).length;
+          const badge = document.createElement('span');
+          badge.className = 'absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center';
+          badge.textContent = orderCount;
+          dayCell.appendChild(badge);
+          
+          // Click untuk show quick actions
+          dayCell.addEventListener('click', () => {
+            showCalendarDayActions(dateStr);
+          });
+        } else {
+          dayCell.addEventListener('click', () => {
+            document.getElementById('order-date').value = dateStr;
+            document.getElementById('calendar-modal').classList.add('hidden');
+            document.getElementById('add-order-modal').classList.remove('hidden');
+          });
+        }
+        
+        grid.appendChild(dayCell);
+      }
+      
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      document.getElementById('calendar-month-year').textContent = `${monthNames[month]} ${year}`;
+    }
+
+    function renderAnalytics(orders, chartType = 'bar', sortOrder = 'highest') {
+      const customerCounts = {};
+      orders.forEach(order => {
+        customerCounts[order.customer_name] = (customerCounts[order.customer_name] || 0) + order.new_dn;
+      });
+      
+      let sortedCustomers = Object.entries(customerCounts);
+      
+      if (sortOrder === 'highest') {
+        sortedCustomers = sortedCustomers.sort((a, b) => b[1] - a[1]).slice(0, 10);
+      } else {
+        sortedCustomers = sortedCustomers.sort((a, b) => a[1] - b[1]).slice(0, 10);
+      }
+      
+      const ctx = document.getElementById('analytics-chart');
+      
+      if (currentChart) {
+        currentChart.destroy();
+      }
+      
+      currentChart = new Chart(ctx, {
+        type: chartType,
+        data: {
+          labels: sortedCustomers.map(c => c[0]),
+          datasets: [{
+            label: 'Total DN',
+            data: sortedCustomers.map(c => c[1]),
+            backgroundColor: 'rgba(59, 130, 246, 0.7)',
+            borderColor: 'rgba(59, 130, 246, 1)',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top'
+            },
+            title: {
+              display: true,
+              text: sortOrder === 'highest' ? 'Top 10 Customers (Highest DN)' : 'Top 10 Customers (Lowest DN)'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    function syncToFirebase() {
+      if (window.firebaseDB && window.firebaseRef && window.firebaseSet) {
+        const syncStatus = document.getElementById('sync-status');
+        if (syncStatus) {
+          syncStatus.classList.remove('hidden');
+        }
+        const ordersRef = window.firebaseRef(window.firebaseDB, 'orders');
+        window.firebaseSet(ordersRef, currentOrders.map(order => ({
+          ...order,
+          synced_at: new Date().toISOString()
+        }))).then(() => {
+          console.log('✅ Data synced to Firebase successfully');
+          if (syncStatus) {
+            setTimeout(() => syncStatus.classList.add('hidden'), 1000);
+          }
+        }).catch((error) => {
+          console.error('❌ Firebase sync error:', error);
+          showToast('⚠️ Sync failed - data saved locally', 'error');
+        });
+      }
+    }
+
+    function listenToFirebaseChanges() {
+      if (window.firebaseDB && window.firebaseRef && window.firebaseOnValue) {
+        const ordersRef = window.firebaseRef(window.firebaseDB, 'orders');
+        window.firebaseOnValue(ordersRef, (snapshot) => {
+          const data = snapshot.val();
+          if (data && Array.isArray(data)) {
+            console.log('📥 Received data from Firebase:', data.length, 'orders');
+            // Update akan ditangani oleh onDataChanged dari Data SDK
+          }
+        });
+      }
+    }
+
+    function showCalendarDayActions(dateStr) {
+      const modal = document.getElementById('calendar-day-modal');
+      const dateDisplay = document.getElementById('calendar-day-date');
+      const ordersContainer = document.getElementById('calendar-day-orders');
+      
+      dateDisplay.textContent = new Date(dateStr).toLocaleDateString('id-ID', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+      
+      const dayOrders = currentOrders.filter(o => o.order_date === dateStr);
+      ordersContainer.innerHTML = '';
+      
+      dayOrders.forEach(order => {
+        const orderDiv = document.createElement('div');
+        orderDiv.className = 'p-4 rounded-lg border-2';
+        orderDiv.style.borderColor = 'var(--primary)';
+        orderDiv.style.backgroundColor = 'var(--background)';
+        orderDiv.innerHTML = `
+          <div class="flex justify-between items-start mb-3">
+            <div class="flex-1">
+              <h4 class="font-bold text-lg">${order.customer_name}</h4>
+              <p class="text-sm" style="color: var(--text-secondary);">
+                <span class="px-2 py-1 rounded-full text-xs ${order.destination === 'CMI' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}">
+                  ${order.destination}
+                </span>
+              </p>
+              <div class="mt-2 grid grid-cols-2 gap-2 text-sm">
+                <div><strong>Target DN:</strong> ${order.target_dn}</div>
+                <div><strong>New DN:</strong> ${order.new_dn}</div>
+                <div><strong>Created By:</strong> ${order.created_by}</div>
+                <div>
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" ${order.completed ? 'checked' : ''} class="day-order-checkbox w-4 h-4" data-id="${order.__backendId}">
+                    <span class="font-medium">${order.completed ? '✅ Completed' : '⏳ Pending'}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button class="edit-day-order-btn px-3 py-1 bg-blue-500 text-white rounded-lg text-sm" data-id="${order.__backendId}">
+                ✏️ Edit
+              </button>
+              <button class="delete-day-order-btn px-3 py-1 bg-red-500 text-white rounded-lg text-sm" data-id="${order.__backendId}">
+                🗑️ Delete
+              </button>
+            </div>
+          </div>
+        `;
+        ordersContainer.appendChild(orderDiv);
+      });
+      
+      // Event listeners untuk checkbox
+      document.querySelectorAll('.day-order-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', async (e) => {
+          const orderId = e.target.dataset.id;
+          const order = currentOrders.find(o => o.__backendId === orderId);
+          if (order) {
+            order.completed = e.target.checked;
+            const result = await window.dataSdk.update(order);
+            if (result.isOk) {
+              showToast(e.target.checked ? '✅ Order completed!' : '⏳ Order uncompleted');
+              syncToFirebase();
+            }
+          }
+        });
+      });
+      
+      // Event listeners untuk edit
+      document.querySelectorAll('.edit-day-order-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const orderId = e.target.dataset.id;
+          const order = currentOrders.find(o => o.__backendId === orderId);
+          if (order) {
+            // Populate edit form
+            document.getElementById('order-destination').value = order.destination;
+            updateCustomerDropdown();
+            document.getElementById('order-customer').value = order.customer_name;
+            document.getElementById('order-new-dn').value = order.new_dn;
+            document.getElementById('order-target-dn').value = order.target_dn;
+            document.getElementById('order-date').value = order.order_date;
+            
+            // Change form to edit mode
+            const submitBtn = document.getElementById('submit-order-btn');
+            const submitText = document.getElementById('submit-text');
+            submitText.textContent = 'Update Order';
+            submitBtn.dataset.editId = orderId;
+            
+            modal.classList.add('hidden');
+            document.getElementById('add-order-modal').classList.remove('hidden');
+          }
+        });
+      });
+      
+      // Event listeners untuk delete
+      document.querySelectorAll('.delete-day-order-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const orderId = e.target.dataset.id;
+          const order = currentOrders.find(o => o.__backendId === orderId);
+          if (order) {
+            const confirmDiv = document.createElement('div');
+            confirmDiv.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            confirmDiv.innerHTML = `
+              <div class="bg-white p-6 rounded-xl shadow-2xl max-w-md">
+                <h3 class="text-xl font-bold mb-4">Confirm Delete</h3>
+                <p class="mb-6">Are you sure you want to delete this order for <strong>${order.customer_name}</strong>?</p>
+                <div class="flex gap-3">
+                  <button id="confirm-delete" class="flex-1 py-2 bg-red-500 text-white rounded-lg font-medium">Delete</button>
+                  <button id="cancel-delete" class="flex-1 py-2 bg-gray-300 rounded-lg font-medium">Cancel</button>
+                </div>
+              </div>
+            `;
+            document.body.appendChild(confirmDiv);
+            
+            document.getElementById('confirm-delete').addEventListener('click', async () => {
+              const result = await window.dataSdk.delete(order);
+              if (result.isOk) {
+                showToast('🗑️ Order deleted successfully');
+                syncToFirebase();
+                confirmDiv.remove();
+                // Refresh calendar day view
+                const remaining = currentOrders.filter(o => o.order_date === dateStr);
+                if (remaining.length === 0) {
+                  modal.classList.add('hidden');
+                } else {
+                  showCalendarDayActions(dateStr);
+                }
+              }
+              confirmDiv.remove();
+            });
+            
+            document.getElementById('cancel-delete').addEventListener('click', () => {
+              confirmDiv.remove();
+            });
+          }
+        });
+      });
+      
+      modal.classList.remove('hidden');
+    }
+
+    function generateEmailPreview() {
+      const to = document.getElementById('email-to').value;
+      const cc = document.getElementById('email-cc').value;
+      const subject = document.getElementById('email-subject').value;
+      const message = document.getElementById('email-message').value;
+      
+      let totalCMI = 0;
+      let totalBU17 = 0;
+      const bu17Summary = {};
+      const cmiSummary = {};
+      
+      currentOrders.forEach(order => {
+        if (order.destination === 'CMI') {
+          totalCMI += order.new_dn;
+          if (!cmiSummary[order.customer_name]) {
+            cmiSummary[order.customer_name] = { total: 0, location: '' };
+          }
+          cmiSummary[order.customer_name].total += order.new_dn;
+          const customer = cmiCustomers.find(c => c.name === order.customer_name);
+          if (customer) cmiSummary[order.customer_name].location = customer.city;
+        } else if (order.destination === 'BU 17') {
+          totalBU17 += order.new_dn;
+          if (!bu17Summary[order.customer_name]) {
+            bu17Summary[order.customer_name] = { total: 0, location: '' };
+          }
+          bu17Summary[order.customer_name].total += order.new_dn;
+          const customer = bu17Customers.find(c => c.name === order.customer_name);
+          if (customer) bu17Summary[order.customer_name].location = customer.destination;
+        }
+      });
+      
+      let ordersTable = '<h3 style="color: #3b82f6; margin-top: 30px; margin-bottom: 15px;">📋 Complete Order List</h3>';
+      ordersTable += '<table style="width: 100%; border-collapse: collapse; margin-top: 20px;">';
+      ordersTable += '<thead><tr style="background-color: #3b82f6; color: white;">';
+      ordersTable += '<th style="border: 1px solid #ddd; padding: 12px;">Customer</th>';
+      ordersTable += '<th style="border: 1px solid #ddd; padding: 12px;">Destination</th>';
+      ordersTable += '<th style="border: 1px solid #ddd; padding: 12px;">Target DN</th>';
+      ordersTable += '<th style="border: 1px solid #ddd; padding: 12px;">New DN</th>';
+      ordersTable += '<th style="border: 1px solid #ddd; padding: 12px;">Date</th>';
+      ordersTable += '<th style="border: 1px solid #ddd; padding: 12px;">Status</th>';
+      ordersTable += '</tr></thead><tbody>';
+      
+      currentOrders.forEach(order => {
+        ordersTable += '<tr>';
+        ordersTable += `<td style="border: 1px solid #ddd; padding: 8px;">${order.customer_name}</td>`;
+        ordersTable += `<td style="border: 1px solid #ddd; padding: 8px;">${order.destination}</td>`;
+        ordersTable += `<td style="border: 1px solid #ddd; padding: 8px;">${order.target_dn}</td>`;
+        ordersTable += `<td style="border: 1px solid #ddd; padding: 8px;">${order.new_dn}</td>`;
+        ordersTable += `<td style="border: 1px solid #ddd; padding: 8px;">${new Date(order.order_date).toLocaleDateString()}</td>`;
+        ordersTable += `<td style="border: 1px solid #ddd; padding: 8px;">${order.completed ? '✅ Completed' : '⏳ Pending'}</td>`;
+        ordersTable += '</tr>';
+      });
+      
+      ordersTable += '</tbody></table>';
+      
+      // BU 17 Summary Table
+      let bu17Table = '<h3 style="color: #3b82f6; margin-top: 30px; margin-bottom: 15px;">📊 Internal (BU 17) Summary</h3>';
+      bu17Table += '<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">';
+      bu17Table += '<thead><tr style="background-color: #3b82f6; color: white;">';
+      bu17Table += '<th style="border: 1px solid #ddd; padding: 12px;">Customer</th>';
+      bu17Table += '<th style="border: 1px solid #ddd; padding: 12px;">Destination</th>';
+      bu17Table += '<th style="border: 1px solid #ddd; padding: 12px;">Total DN</th>';
+      bu17Table += '</tr></thead><tbody>';
+      
+      Object.entries(bu17Summary).forEach(([customer, data]) => {
+        bu17Table += '<tr>';
+        bu17Table += `<td style="border: 1px solid #ddd; padding: 8px;">${customer}</td>`;
+        bu17Table += `<td style="border: 1px solid #ddd; padding: 8px;">${data.location}</td>`;
+        bu17Table += `<td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">${data.total}</td>`;
+        bu17Table += '</tr>';
+      });
+      
+      bu17Table += '</tbody>';
+      bu17Table += '<tfoot><tr style="background-color: #f0f9ff; font-weight: bold;">';
+      bu17Table += '<td colspan="2" style="border: 1px solid #ddd; padding: 8px;">Total BU 17:</td>';
+      bu17Table += `<td style="border: 1px solid #ddd; padding: 8px;">${totalBU17}</td>`;
+      bu17Table += '</tr></tfoot></table>';
+      
+      // CMI Summary Table
+      let cmiTable = '<h3 style="color: #10b981; margin-top: 30px; margin-bottom: 15px;">📊 External (CMI) Summary</h3>';
+      cmiTable += '<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">';
+      cmiTable += '<thead><tr style="background-color: #10b981; color: white;">';
+      cmiTable += '<th style="border: 1px solid #ddd; padding: 12px;">Customer</th>';
+      cmiTable += '<th style="border: 1px solid #ddd; padding: 12px;">City</th>';
+      cmiTable += '<th style="border: 1px solid #ddd; padding: 12px;">Total DN</th>';
+      cmiTable += '</tr></thead><tbody>';
+      
+      Object.entries(cmiSummary).forEach(([customer, data]) => {
+        cmiTable += '<tr>';
+        cmiTable += `<td style="border: 1px solid #ddd; padding: 8px;">${customer}</td>`;
+        cmiTable += `<td style="border: 1px solid #ddd; padding: 8px;">${data.location}</td>`;
+        cmiTable += `<td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">${data.total}</td>`;
+        cmiTable += '</tr>';
+      });
+      
+      cmiTable += '</tbody>';
+      cmiTable += '<tfoot><tr style="background-color: #f0fdf4; font-weight: bold;">';
+      cmiTable += '<td colspan="2" style="border: 1px solid #ddd; padding: 8px;">Total CMI:</td>';
+      cmiTable += `<td style="border: 1px solid #ddd; padding: 8px;">${totalCMI}</td>`;
+      cmiTable += '</tr></tfoot></table>';
+      
+      const summary = `
+        <div style="margin-top: 30px; padding: 20px; background-color: #f0f9ff; border-radius: 10px; border: 2px solid #3b82f6;">
+          <h3 style="color: #3b82f6; margin-bottom: 15px;">🎯 Grand Total Summary</h3>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+            <div style="text-align: center; padding: 15px; background-color: white; border-radius: 8px;">
+              <p style="font-size: 14px; color: #666;">Total Orders</p>
+              <p style="font-size: 32px; font-weight: bold; color: #3b82f6;">${currentOrders.length}</p>
+            </div>
+            <div style="text-align: center; padding: 15px; background-color: white; border-radius: 8px;">
+              <p style="font-size: 14px; color: #666;">Total BU 17 DN</p>
+              <p style="font-size: 32px; font-weight: bold; color: #3b82f6;">${totalBU17}</p>
+            </div>
+            <div style="text-align: center; padding: 15px; background-color: white; border-radius: 8px;">
+              <p style="font-size: 14px; color: #666;">Total CMI DN</p>
+              <p style="font-size: 32px; font-weight: bold; color: #10b981;">${totalCMI}</p>
+            </div>
+          </div>
+          <div style="margin-top: 20px; text-align: center; padding: 20px; background-color: white; border-radius: 8px; border: 2px solid #3b82f6;">
+            <p style="font-size: 16px; color: #666; margin-bottom: 5px;">🎯 Grand Total DN</p>
+            <p style="font-size: 48px; font-weight: bold; color: #3b82f6;">${totalCMI + totalBU17}</p>
+            <p style="font-size: 12px; color: #999; margin-top: 5px;">Combined BU 17 + CMI</p>
+          </div>
+        </div>
+      `;
+      
+      const previewHTML = `
+        <div style="font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto;">
+          <div style="background-color: #f9fafb; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <p><strong>To:</strong> ${to}</p>
+            ${cc ? `<p><strong>CC:</strong> ${cc}</p>` : ''}
+            <p><strong>Subject:</strong> ${subject}</p>
+          </div>
+          <div style="background-color: white; padding: 30px; border-radius: 8px; border: 1px solid #e5e7eb;">
+            <h2 style="color: #3b82f6; margin-bottom: 20px; text-align: center;">DN ORDER IKK - INDAH KIAT KARAWANG</h2>
+            <p style="margin-bottom: 20px;">${message}</p>
+            ${ordersTable}
+            ${bu17Table}
+            ${cmiTable}
+            ${summary}
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb;">
+              <p style="font-size: 12px; color: #666;">Created by: ${currentUser || 'System'}</p>
+              <p style="font-size: 12px; color: #666;">Generated on: ${new Date().toLocaleString()}</p>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      return previewHTML;
+    }
+
+    const dataHandler = {
+      onDataChanged(data) {
+        currentOrders = data;
+        updateDashboard(data);
+        updateSummaryTables(data);
+        if (!document.getElementById('order-list-view').classList.contains('hidden')) {
+          renderOrdersTable(data);
+        }
+        if (!document.getElementById('analytics-view').classList.contains('hidden')) {
+          const chartType = document.getElementById('chart-type').value;
+          renderAnalytics(data, chartType);
+        }
+      }
+    };
+
+    async function init() {
+      const result = await window.dataSdk.init(dataHandler);
+      if (!result.isOk) {
+        console.error('Failed to initialize data SDK');
+      }
+      
+      const savedTheme = localStorage.getItem('selectedTheme') || 'blue';
+      applyTheme(savedTheme);
+      
+      renderCustomerLists();
+      setupEventListeners();
+      
+      // Setup Firebase real-time listener
+      listenToFirebaseChanges();
+      
+      console.log('🚀 Application initialized successfully');
+      console.log('📡 Firebase sync enabled');
+    }
+
+    function renderCustomerLists() {
+      const cmiList = document.getElementById('cmi-customer-list');
+      cmiList.innerHTML = '';
+      cmiCustomers.forEach((customer, index) => {
+        const div = document.createElement('div');
+        div.className = 'flex justify-between items-center p-3 rounded-lg';
+        div.style.backgroundColor = 'var(--background)';
+        div.innerHTML = `
+          <div>
+            <p class="font-medium">${customer.name}</p>
+            <p class="text-sm" style="color: var(--text-secondary);">${customer.city}</p>
+          </div>
+          <button class="remove-cmi-customer px-3 py-1 bg-red-500 text-white rounded-lg text-sm" data-index="${index}">Remove</button>
+        `;
+        cmiList.appendChild(div);
+      });
+
+      const bu17List = document.getElementById('bu17-customer-list');
+      bu17List.innerHTML = '';
+      bu17Customers.forEach((customer, index) => {
+        const div = document.createElement('div');
+        div.className = 'flex justify-between items-center p-3 rounded-lg';
+        div.style.backgroundColor = 'var(--background)';
+        div.innerHTML = `
+          <div>
+            <p class="font-medium">${customer.name}</p>
+            <p class="text-sm" style="color: var(--text-secondary);">${customer.destination}</p>
+          </div>
+          <button class="remove-bu17-customer px-3 py-1 bg-red-500 text-white rounded-lg text-sm" data-index="${index}">Remove</button>
+        `;
+        bu17List.appendChild(div);
+      });
+
+      document.querySelectorAll('.remove-cmi-customer').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const index = parseInt(e.target.dataset.index);
+          cmiCustomers.splice(index, 1);
+          renderCustomerLists();
+          updateCustomerDropdown();
+          showToast('Customer removed');
+        });
+      });
+
+      document.querySelectorAll('.remove-bu17-customer').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const index = parseInt(e.target.dataset.index);
+          bu17Customers.splice(index, 1);
+          renderCustomerLists();
+          updateCustomerDropdown();
+          showToast('Customer removed');
+        });
+      });
+    }
+
+    function updateCustomerDropdown() {
+      const destination = document.getElementById('order-destination').value;
+      const customerSelect = document.getElementById('order-customer');
+      customerSelect.innerHTML = '<option value="">Select Customer</option>';
+      
+      if (destination === 'CMI') {
+        cmiCustomers.forEach(customer => {
+          const option = document.createElement('option');
+          option.value = customer.name;
+          option.textContent = `${customer.name} - ${customer.city}`;
+          customerSelect.appendChild(option);
+        });
+      } else if (destination === 'BU 17') {
+        bu17Customers.forEach(customer => {
+          const option = document.createElement('option');
+          option.value = customer.name;
+          option.textContent = `${customer.name} - ${customer.destination}`;
+          customerSelect.appendChild(option);
+        });
+      }
+    }
+
+    function setupEventListeners() {
+      document.getElementById('login-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const createdByName = document.getElementById('created-by-name').value.trim();
+        
+        if (username === 'IKK' && password === '123') {
+          currentUser = createdByName || username;
+          document.getElementById('login-screen').classList.add('hidden');
+          document.getElementById('main-header').classList.remove('hidden');
+          document.getElementById('main-content').classList.remove('hidden');
+          document.getElementById('logged-user').textContent = `Logged in as: ${currentUser}`;
+          showToast(`Welcome, ${currentUser}!`);
+        } else {
+          showToast('Invalid credentials', 'error');
+        }
+      });
+
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        currentUser = null;
+        document.getElementById('login-screen').classList.remove('hidden');
+        document.getElementById('main-header').classList.add('hidden');
+        document.getElementById('main-content').classList.add('hidden');
+        document.getElementById('login-form').reset();
+        document.getElementById('username').value = 'IKK';
+        showToast('Logged out successfully');
+      });
+
+      document.getElementById('add-order-btn').addEventListener('click', () => {
+        document.getElementById('add-order-modal').classList.remove('hidden');
+        document.getElementById('order-date').valueAsDate = new Date();
+      });
+
+      document.getElementById('view-orders-btn').addEventListener('click', () => {
+        document.getElementById('order-list-view').classList.remove('hidden');
+        document.getElementById('analytics-view').classList.add('hidden');
+        renderOrdersTable(currentOrders);
+      });
+
+      document.getElementById('analytics-btn').addEventListener('click', () => {
+        document.getElementById('analytics-view').classList.remove('hidden');
+        document.getElementById('order-list-view').classList.add('hidden');
+        const chartType = document.getElementById('chart-type').value;
+        const sortOrder = document.getElementById('analytics-sort').value;
+        renderAnalytics(currentOrders, chartType, sortOrder);
+      });
+
+      document.getElementById('email-btn').addEventListener('click', () => {
+        document.getElementById('email-modal').classList.remove('hidden');
+      });
+
+      document.getElementById('settings-btn').addEventListener('click', () => {
+        document.getElementById('settings-modal').classList.remove('hidden');
+      });
+
+      document.getElementById('calendar-btn').addEventListener('click', () => {
+        document.getElementById('calendar-modal').classList.remove('hidden');
+        const today = new Date();
+        renderCalendar(today.getFullYear(), today.getMonth());
+      });
+
+      document.getElementById('order-destination').addEventListener('change', updateCustomerDropdown);
+
+      document.getElementById('order-date').addEventListener('change', (e) => {
+        const selectedDate = e.target.value;
+        const warningElement = document.getElementById('holiday-warning');
+        
+        if (isHoliday(selectedDate)) {
+          warningElement.classList.remove('hidden');
+        } else {
+          warningElement.classList.add('hidden');
+        }
+      });
+
+      document.getElementById('order-new-dn').addEventListener('input', (e) => {
+        const newDN = parseInt(e.target.value) || 0;
+        document.getElementById('order-target-dn').value = calculateTargetDN(newDN);
+      });
+
+      document.getElementById('add-order-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const submitBtn = document.getElementById('submit-order-btn');
+        const submitText = document.getElementById('submit-text');
+        const editId = submitBtn.dataset.editId;
+        
+        submitBtn.disabled = true;
+        submitText.textContent = editId ? 'Updating...' : 'Adding...';
+        
+        const newDN = parseInt(document.getElementById('order-new-dn').value);
+        const orderData = {
+          customer_name: document.getElementById('order-customer').value,
+          destination: document.getElementById('order-destination').value,
+          target_dn: calculateTargetDN(newDN),
+          new_dn: newDN,
+          order_date: document.getElementById('order-date').value,
+          completed: false,
+          created_by: currentUser || 'Unknown',
+          created_at: new Date().toISOString()
+        };
+        
+        let result;
+        
+        if (editId) {
+          // Update existing order
+          const existingOrder = currentOrders.find(o => o.__backendId === editId);
+          if (existingOrder) {
+            const updatedOrder = { ...existingOrder, ...orderData };
+            result = await window.dataSdk.update(updatedOrder);
+            
+            if (result.isOk) {
+              showToast('✅ Order updated successfully!');
+              console.log('✅ Order updated:', updatedOrder.customer_name);
+              syncToFirebase();
+              delete submitBtn.dataset.editId;
+              submitText.textContent = 'Add Order';
+            } else {
+              showToast('❌ Failed to update order', 'error');
+              console.error('Update failed:', result.error);
+            }
+          }
+        } else {
+          // Create new order
+          if (currentOrders.length >= 999) {
+            showToast('⚠️ Maximum limit of 999 orders reached', 'error');
+            submitBtn.disabled = false;
+            submitText.textContent = 'Add Order';
+            return;
+          }
+          
+          result = await window.dataSdk.create(orderData);
+          
+          if (result.isOk) {
+            showToast('✅ Order added successfully!');
+            console.log('✅ New order created:', orderData.customer_name);
+            console.log('📤 Syncing to Firebase...');
+            // Delay sync untuk memastikan Data SDK sudah update currentOrders
+            setTimeout(() => {
+              syncToFirebase();
+            }, 500);
+          } else {
+            showToast('❌ Failed to add order', 'error');
+            console.error('Create failed:', result.error);
+          }
+        }
+        
+        submitBtn.disabled = false;
+        submitText.textContent = 'Add Order';
+        
+        if (result && result.isOk) {
+          document.getElementById('add-order-modal').classList.add('hidden');
+          document.getElementById('add-order-form').reset();
+        }
+      });
+
+      document.getElementById('cancel-order-btn').addEventListener('click', () => {
+        document.getElementById('add-order-modal').classList.add('hidden');
+        document.getElementById('add-order-form').reset();
+        const submitBtn = document.getElementById('submit-order-btn');
+        const submitText = document.getElementById('submit-text');
+        delete submitBtn.dataset.editId;
+        submitText.textContent = 'Add Order';
+      });
+
+      document.getElementById('close-calendar').addEventListener('click', () => {
+        document.getElementById('calendar-modal').classList.add('hidden');
+      });
+
+      document.getElementById('close-settings').addEventListener('click', () => {
+        document.getElementById('settings-modal').classList.add('hidden');
+      });
+
+      document.getElementById('close-email').addEventListener('click', () => {
+        document.getElementById('email-modal').classList.add('hidden');
+      });
+
+      let currentMonth = new Date().getMonth();
+      let currentYear = new Date().getFullYear();
+
+      document.getElementById('prev-month').addEventListener('click', () => {
+        currentMonth--;
+        if (currentMonth < 0) {
+          currentMonth = 11;
+          currentYear--;
+        }
+        renderCalendar(currentYear, currentMonth);
+      });
+
+      document.getElementById('next-month').addEventListener('click', () => {
+        currentMonth++;
+        if (currentMonth > 11) {
+          currentMonth = 0;
+          currentYear++;
+        }
+        renderCalendar(currentYear, currentMonth);
+      });
+
+      document.querySelectorAll('.theme-option').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const theme = e.target.dataset.theme;
+          applyTheme(theme);
+          showToast('Theme changed!');
+        });
+      });
+
+      document.getElementById('language-select').addEventListener('change', (e) => {
+        currentLanguage = e.target.value;
+        showToast('Language changed!');
+      });
+
+      document.getElementById('tab-cmi').addEventListener('click', () => {
+        document.getElementById('cmi-customers-section').classList.remove('hidden');
+        document.getElementById('bu17-customers-section').classList.add('hidden');
+        document.getElementById('tab-cmi').style.backgroundColor = 'var(--primary)';
+        document.getElementById('tab-cmi').style.color = 'white';
+        document.getElementById('tab-bu17').style.backgroundColor = '#d1d5db';
+        document.getElementById('tab-bu17').style.color = 'black';
+      });
+
+      document.getElementById('tab-bu17').addEventListener('click', () => {
+        document.getElementById('bu17-customers-section').classList.remove('hidden');
+        document.getElementById('cmi-customers-section').classList.add('hidden');
+        document.getElementById('tab-bu17').style.backgroundColor = 'var(--secondary)';
+        document.getElementById('tab-bu17').style.color = 'white';
+        document.getElementById('tab-cmi').style.backgroundColor = '#d1d5db';
+        document.getElementById('tab-cmi').style.color = 'black';
+      });
+
+      document.getElementById('add-cmi-customer-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('new-cmi-customer').value.trim();
+        const city = document.getElementById('new-cmi-city').value.trim();
+        if (name && city) {
+          cmiCustomers.push({ name, city });
+          renderCustomerLists();
+          document.getElementById('new-cmi-customer').value = '';
+          document.getElementById('new-cmi-city').value = '';
+          showToast('CMI customer added successfully!');
+        }
+      });
+
+      document.getElementById('add-bu17-customer-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('new-bu17-customer').value.trim();
+        const destination = document.getElementById('new-bu17-destination').value.trim();
+        if (name && destination) {
+          bu17Customers.push({ name, destination });
+          renderCustomerLists();
+          document.getElementById('new-bu17-customer').value = '';
+          document.getElementById('new-bu17-destination').value = '';
+          showToast('BU 17 customer added successfully!');
+        }
+      });
+
+      document.getElementById('email-config-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        emailConfig.sender = document.getElementById('sender-email').value;
+        emailConfig.recipient = document.getElementById('recipient-email').value;
+        showToast('Email settings saved!');
+      });
+
+      document.getElementById('send-email-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const to = document.getElementById('email-to').value;
+        const cc = document.getElementById('email-cc').value;
+        const subject = document.getElementById('email-subject').value;
+        
+        const statusDiv = document.getElementById('email-status');
+        statusDiv.className = 'mt-4 p-4 rounded-lg bg-green-100 text-green-800';
+        statusDiv.innerHTML = `
+          <p class="font-bold mb-2">✅ Email sent successfully!</p>
+          <p class="text-sm">To: ${to}</p>
+          ${cc ? `<p class="text-sm">CC: ${cc}</p>` : ''}
+          <p class="text-sm">Subject: ${subject}</p>
+          <p class="text-sm mt-2">Complete order list with ${currentOrders.length} orders included.</p>
+        `;
+        statusDiv.classList.remove('hidden');
+        
+        setTimeout(() => {
+          statusDiv.classList.add('hidden');
+          document.getElementById('email-modal').classList.add('hidden');
+        }, 4000);
+      });
+
+      document.getElementById('preview-email-btn').addEventListener('click', () => {
+        const previewContent = document.getElementById('email-preview-content');
+        previewContent.innerHTML = generateEmailPreview();
+        document.getElementById('email-preview-modal').classList.remove('hidden');
+      });
+
+      document.getElementById('close-email-preview').addEventListener('click', () => {
+        document.getElementById('email-preview-modal').classList.add('hidden');
+      });
+
+      document.getElementById('close-calendar-day').addEventListener('click', () => {
+        document.getElementById('calendar-day-modal').classList.add('hidden');
+      });
+
+      // Online/Offline status monitoring
+      function updateOnlineStatus() {
+        const statusDot = document.getElementById('status-dot');
+        const statusText = document.getElementById('status-text');
+        
+        if (navigator.onLine) {
+          statusDot.className = 'w-3 h-3 rounded-full bg-green-500';
+          statusText.textContent = 'Online';
+          statusText.style.color = '#10b981';
+        } else {
+          statusDot.className = 'w-3 h-3 rounded-full bg-red-500';
+          statusText.textContent = 'Offline';
+          statusText.style.color = '#ef4444';
+          showToast('⚠️ Connection lost - working offline', 'error');
+        }
+      }
+
+      window.addEventListener('online', () => {
+        updateOnlineStatus();
+        showToast('✅ Connection restored', 'success');
+        syncToFirebase();
+      });
+
+      window.addEventListener('offline', () => {
+        updateOnlineStatus();
+      });
+
+      // Initial status check
+      updateOnlineStatus();
+
+      document.getElementById('chart-type').addEventListener('change', (e) => {
+        const sortOrder = document.getElementById('analytics-sort').value;
+        renderAnalytics(currentOrders, e.target.value, sortOrder);
+      });
+
+      document.getElementById('analytics-sort').addEventListener('change', (e) => {
+        const chartType = document.getElementById('chart-type').value;
+        renderAnalytics(currentOrders, chartType, e.target.value);
+      });
+
+      document.getElementById('analytics-period').addEventListener('change', (e) => {
+        const monthFilter = document.getElementById('analytics-month-filter');
+        if (e.target.value === 'yearly') {
+          monthFilter.type = 'number';
+          monthFilter.placeholder = 'Enter year (e.g., 2024)';
+          monthFilter.value = new Date().getFullYear();
+        } else {
+          monthFilter.type = 'month';
+          monthFilter.placeholder = '';
+          monthFilter.value = '';
+        }
+      });
+
+      document.getElementById('export-pdf-btn').addEventListener('click', async () => {
+        const content = generatePrintContent();
+        const printArea = document.getElementById('print-area');
+        printArea.classList.remove('hidden');
+        
+        const canvas = await html2canvas(printArea, { scale: 2 });
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgData = canvas.toDataURL('image/png');
+        const imgWidth = 210;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        pdf.save('dn_orders_ikk.pdf');
+        
+        printArea.classList.add('hidden');
+        showToast('📄 PDF file downloaded!');
+      });
+
+      document.getElementById('export-excel-btn').addEventListener('click', () => {
+        const ws = XLSX.utils.json_to_sheet(currentOrders.map(o => ({
+          Customer: o.customer_name,
+          Destination: o.destination,
+          'Target DN': o.target_dn,
+          'New DN': o.new_dn,
+          Date: o.order_date,
+          'Created By': o.created_by,
+          Completed: o.completed ? 'Yes' : 'No'
+        })));
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Orders');
+        XLSX.writeFile(wb, 'dn_orders_ikk.xlsx');
+        showToast('📊 Excel file downloaded!');
+      });
+
+      document.getElementById('export-doc-btn').addEventListener('click', () => {
+        const content = generatePrintContentHTML();
+        const blob = new Blob([content], { type: 'application/msword' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'dn_orders_ikk.doc';
+        link.click();
+        showToast('     DOC file downloaded!');
+      });
+
+      document.getElementById('export-jpg-btn').addEventListener('click', async () => {
+        const printArea = document.getElementById('print-area');
+        generatePrintContent();
+        printArea.classList.remove('hidden');
+        
+        const canvas = await html2canvas(printArea, { scale: 2 });
+        const link = document.createElement('a');
+        link.download = 'dn_orders_ikk.jpg';
+        link.href = canvas.toDataURL('image/jpeg', 1.0);
+        link.click();
+        
+        printArea.classList.add('hidden');
+        showToast('🖼️ JPG file downloaded!');
+      });
+
+      document.getElementById('export-png-btn').addEventListener('click', async () => {
+        const printArea = document.getElementById('print-area');
+        generatePrintContent();
+        printArea.classList.remove('hidden');
+        
+        const canvas = await html2canvas(printArea, { scale: 2 });
+        const link = document.createElement('a');
+        link.download = 'dn_orders_ikk.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        
+        printArea.classList.add('hidden');
+        showToast('🖼️ PNG file downloaded!');
+      });
+
+      document.getElementById('print-preview-btn').addEventListener('click', () => {
+        const previewContent = document.getElementById('print-preview-content');
+        const content = generatePrintContentHTML();
+        previewContent.innerHTML = content;
+        document.getElementById('print-preview-modal').classList.remove('hidden');
+      });
+
+      document.getElementById('close-print-preview').addEventListener('click', () => {
+        document.getElementById('print-preview-modal').classList.add('hidden');
+      });
+
+      document.getElementById('preview-print-btn').addEventListener('click', () => {
+        generatePrintContent();
+        setTimeout(() => window.print(), 100);
+      });
+
+      document.getElementById('print-btn').addEventListener('click', () => {
+        generatePrintContent();
+        setTimeout(() => window.print(), 100);
+      });
+
+      function generatePrintContentHTML() {
+        let totalCMI = 0;
+        let totalBU17 = 0;
+        const bu17Summary = {};
+        const cmiSummary = {};
+        
+        currentOrders.forEach(order => {
+          if (order.destination === 'CMI') {
+            totalCMI += order.new_dn;
+            if (!cmiSummary[order.customer_name]) {
+              cmiSummary[order.customer_name] = { total: 0, location: '' };
+            }
+            cmiSummary[order.customer_name].total += order.new_dn;
+            const customer = cmiCustomers.find(c => c.name === order.customer_name);
+            if (customer) cmiSummary[order.customer_name].location = customer.city;
+          } else if (order.destination === 'BU 17') {
+            totalBU17 += order.new_dn;
+            if (!bu17Summary[order.customer_name]) {
+              bu17Summary[order.customer_name] = { total: 0, location: '' };
+            }
+            bu17Summary[order.customer_name].total += order.new_dn;
+            const customer = bu17Customers.find(c => c.name === order.customer_name);
+            if (customer) bu17Summary[order.customer_name].location = customer.destination;
+          }
+        });
+        
+        let html = '<div style="padding: 30px; font-family: Arial, sans-serif; background: white;">';
+        html += '<h1 style="text-align: center; color: #3b82f6; margin-bottom: 10px;">DN ORDER IKK</h1>';
+        html += '<h2 style="text-align: center; color: #666; margin-bottom: 30px;">INDAH KIAT KARAWANG</h2>';
+        
+        html += '<h3 style="color: #3b82f6; margin-top: 30px; margin-bottom: 15px;">📋 Complete Order List</h3>';
+        html += '<table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">';
+        html += '<thead><tr style="background-color: #3b82f6; color: white;">';
+        html += '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Customer</th>';
+        html += '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Destination</th>';
+        html += '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Target DN</th>';
+        html += '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">New DN</th>';
+        html += '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Date</th>';
+        html += '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Created By</th>';
+        html += '</tr></thead><tbody>';
+        
+        currentOrders.forEach(order => {
+          html += '<tr>';
+          html += `<td style="border: 1px solid #ddd; padding: 8px;">${order.customer_name}</td>`;
+          html += `<td style="border: 1px solid #ddd; padding: 8px;">${order.destination}</td>`;
+          html += `<td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">${order.target_dn}</td>`;
+          html += `<td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">${order.new_dn}</td>`;
+          html += `<td style="border: 1px solid #ddd; padding: 8px;">${new Date(order.order_date).toLocaleDateString()}</td>`;
+          html += `<td style="border: 1px solid #ddd; padding: 8px;">${order.created_by}</td>`;
+          html += '</tr>';
+        });
+        
+        html += '</tbody></table>';
+        
+        // BU 17 Summary
+        html += '<h3 style="color: #3b82f6; margin-top: 30px; margin-bottom: 15px;">📊 Internal (BU 17) Summary</h3>';
+        html += '<table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">';
+        html += '<thead><tr style="background-color: #3b82f6; color: white;">';
+        html += '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Customer</th>';
+        html += '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Destination</th>';
+        html += '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Total DN</th>';
+        html += '</tr></thead><tbody>';
+        
+        Object.entries(bu17Summary).forEach(([customer, data]) => {
+          html += '<tr>';
+          html += `<td style="border: 1px solid #ddd; padding: 8px;">${customer}</td>`;
+          html += `<td style="border: 1px solid #ddd; padding: 8px;">${data.location}</td>`;
+          html += `<td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">${data.total}</td>`;
+          html += '</tr>';
+        });
+        
+        html += '</tbody>';
+        html += '<tfoot><tr style="background-color: #f0f9ff; font-weight: bold;">';
+        html += '<td colspan="2" style="border: 1px solid #ddd; padding: 8px;">Total BU 17:</td>';
+        html += `<td style="border: 1px solid #ddd; padding: 8px;">${totalBU17}</td>`;
+        html += '</tr></tfoot></table>';
+        
+        // CMI Summary
+        html += '<h3 style="color: #10b981; margin-top: 30px; margin-bottom: 15px;">📊 External (CMI) Summary</h3>';
+        html += '<table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">';
+        html += '<thead><tr style="background-color: #10b981; color: white;">';
+        html += '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Customer</th>';
+        html += '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">City</th>';
+        html += '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Total DN</th>';
+        html += '</tr></thead><tbody>';
+        
+        Object.entries(cmiSummary).forEach(([customer, data]) => {
+          html += '<tr>';
+          html += `<td style="border: 1px solid #ddd; padding: 8px;">${customer}</td>`;
+          html += `<td style="border: 1px solid #ddd; padding: 8px;">${data.location}</td>`;
+          html += `<td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">${data.total}</td>`;
+          html += '</tr>';
+        });
+        
+        html += '</tbody>';
+        html += '<tfoot><tr style="background-color: #f0fdf4; font-weight: bold;">';
+        html += '<td colspan="2" style="border: 1px solid #ddd; padding: 8px;">Total CMI:</td>';
+        html += `<td style="border: 1px solid #ddd; padding: 8px;">${totalCMI}</td>`;
+        html += '</tr></tfoot></table>';
+        
+        // Grand Total
+        html += '<div style="margin-top: 30px; padding: 20px; background-color: #f0f9ff; border: 2px solid #3b82f6; border-radius: 10px; text-align: center;">';
+        html += '<h3 style="color: #3b82f6; margin-bottom: 20px;">🎯 Grand Total Summary</h3>';
+        html += '<table style="width: 100%; border-collapse: collapse;">';
+        html += '<tr>';
+        html += '<td style="padding: 15px; text-align: center; border: 1px solid #ddd; background: white;"><strong>Total Orders</strong><br><span style="font-size: 32px; color: #3b82f6;">' + currentOrders.length + '</span></td>';
+        html += '<td style="padding: 15px; text-align: center; border: 1px solid #ddd; background: white;"><strong>Total BU 17 DN</strong><br><span style="font-size: 32px; color: #3b82f6;">' + totalBU17 + '</span></td>';
+        html += '<td style="padding: 15px; text-align: center; border: 1px solid #ddd; background: white;"><strong>Total CMI DN</strong><br><span style="font-size: 32px; color: #10b981;">' + totalCMI + '</span></td>';
+        html += '</tr></table>';
+        html += '<div style="margin-top: 20px; padding: 20px; background: white; border: 2px solid #3b82f6; border-radius: 8px;">';
+        html += '<p style="font-size: 16px; margin-bottom: 10px;">🎯 Grand Total DN</p>';
+        html += '<p style="font-size: 48px; font-weight: bold; color: #3b82f6; margin: 0;">' + (totalCMI + totalBU17) + '</p>';
+        html += '<p style="font-size: 12px; color: #999; margin-top: 10px;">Combined BU 17 + CMI</p>';
+        html += '</div></div>';
+        
+        html += '<div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #ccc;">';
+        html += '<p style="font-size: 12px; color: #666;">Created by: ' + (currentUser || 'System') + '</p>';
+        html += '<p style="font-size: 12px; color: #666;">Generated on: ' + new Date().toLocaleString() + '</p>';
+        html += '</div></div>';
+        
+        return html;
+      }
+
+      function generatePrintContent() {
+        const printContent = document.getElementById('print-content');
+        printContent.innerHTML = generatePrintContentHTML();
+        document.getElementById('print-created-by').textContent = currentUser || 'System';
+        document.getElementById('print-date').textContent = new Date().toLocaleString();
+        return printContent.innerHTML;
+      }
+
+      async function downloadChart(format) {
+        const canvas = document.getElementById('analytics-chart');
+        const image = await html2canvas(canvas);
+        
+        if (format === 'jpg' || format === 'png') {
+          const link = document.createElement('a');
+          link.download = `analytics_ikk.${format}`;
+          link.href = image.toDataURL(`image/${format}`);
+          link.click();
+        } else if (format === 'pdf') {
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF();
+          pdf.text('DN Analytics - INDAH KIAT KARAWANG', 10, 10);
+          pdf.addImage(image.toDataURL('image/png'), 'PNG', 10, 20, 190, 100);
+          pdf.text(`Created by: ${currentUser || 'System'}`, 10, 130);
+          pdf.text(`Date: ${new Date().toLocaleString()}`, 10, 140);
+          pdf.save('analytics_ikk.pdf');
+        }
+        showToast(`Chart downloaded as ${format.toUpperCase()}!`);
+      }
+
+      document.getElementById('download-chart-pdf').addEventListener('click', () => downloadChart('pdf'));
+      document.getElementById('download-chart-jpg').addEventListener('click', () => downloadChart('jpg'));
+      document.getElementById('download-chart-png').addEventListener('click', () => downloadChart('png'));
+      document.getElementById('download-chart-excel').addEventListener('click', () => {
+        const customerData = {};
+        currentOrders.forEach(order => {
+          customerData[order.customer_name] = (customerData[order.customer_name] || 0) + order.new_dn;
+        });
+        
+        const ws = XLSX.utils.json_to_sheet(Object.entries(customerData).map(([customer, total]) => ({
+          Customer: customer,
+          'Total DN': total
+        })));
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Analytics');
+        XLSX.writeFile(wb, 'analytics_ikk.xlsx');
+        showToast('Analytics Excel downloaded!');
+      });
+
+      document.getElementById('month-filter').addEventListener('change', (e) => {
+        if (!e.target.value) {
+          renderOrdersTable(currentOrders);
+          return;
+        }
+        const [year, month] = e.target.value.split('-');
+        const filtered = currentOrders.filter(o => {
+          const orderDate = new Date(o.order_date);
+          return orderDate.getFullYear() === parseInt(year) && orderDate.getMonth() === parseInt(month) - 1;
+        });
+        renderOrdersTable(filtered);
+      });
+
+      document.getElementById('analytics-month-filter').addEventListener('change', (e) => {
+        const period = document.getElementById('analytics-period').value;
+        const chartType = document.getElementById('chart-type').value;
+        const sortOrder = document.getElementById('analytics-sort').value;
+        
+        if (!e.target.value) {
+          renderAnalytics(currentOrders, chartType, sortOrder);
+          return;
+        }
+        
+        let filtered;
+        if (period === 'yearly') {
+          const year = parseInt(e.target.value);
+          filtered = currentOrders.filter(o => {
+            const orderDate = new Date(o.order_date);
+            return orderDate.getFullYear() === year;
+          });
+        } else {
+          const [year, month] = e.target.value.split('-');
+          filtered = currentOrders.filter(o => {
+            const orderDate = new Date(o.order_date);
+            return orderDate.getFullYear() === parseInt(year) && orderDate.getMonth() === parseInt(month) - 1;
+          });
+        }
+        renderAnalytics(filtered, chartType, sortOrder);
+      });
+    }
+
+    async function onConfigChange(config) {
+      document.getElementById('app-title').textContent = config.app_title || defaultConfig.app_title;
+      document.getElementById('company-name').textContent = config.company_name || defaultConfig.company_name;
+    }
+
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange,
+      mapToCapabilities: (config) => ({
+        recolorables: [
+          {
+            get: () => config.primary_color || defaultConfig.primary_color,
+            set: (value) => {
+              config.primary_color = value;
+              window.elementSdk.setConfig({ primary_color: value });
+            }
+          },
+          {
+            get: () => config.secondary_color || defaultConfig.secondary_color,
+            set: (value) => {
+              config.secondary_color = value;
+              window.elementSdk.setConfig({ secondary_color: value });
+            }
+          },
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => {
+              config.background_color = value;
+              window.elementSdk.setConfig({ background_color: value });
+            }
+          },
+          {
+            get: () => config.surface_color || defaultConfig.surface_color,
+            set: (value) => {
+              config.surface_color = value;
+              window.elementSdk.setConfig({ surface_color: value });
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              config.text_color = value;
+              window.elementSdk.setConfig({ text_color: value });
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+      }),
+      mapToEditPanelValues: (config) => new Map([
+        ['app_title', config.app_title || defaultConfig.app_title],
+        ['company_name', config.company_name || defaultConfig.company_name]
+      ])
+    });
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b2d76c6f7d7a090',t:'MTc2NjU1MTY4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
