@@ -121,9 +121,7 @@
        <div><label for="username" class="block text-sm font-medium mb-2">Username</label> <input type="text" id="username" value="IKK" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2" style="border-color: var(--text-secondary); background-color: var(--background);">
        </div>
        <div><label for="password" class="block text-sm font-medium mb-2">Password</label> <input type="password" id="password" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2" style="border-color: var(--text-secondary); background-color: var(--background);">
-       </div>
-       <div><label for="created-by-name" class="block text-sm font-medium mb-2">Your Name (Created By)</label> <input type="text" id="created-by-name" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2" style="border-color: var(--text-secondary); background-color: var(--background);" placeholder="Enter your name">
-       </div><button type="submit" class="w-full py-3 rounded-lg font-bold text-white shadow-lg" style="background-color: var(--primary);"> Login </button>
+       </div><button type="submit" class="w-full py-3 rounded-lg font-bold text-white shadow-lg" style="background-color: var(--primary);"> 🚀 Login </button>
       </form>
      </div>
     </div><!-- Header -->
@@ -226,7 +224,6 @@
           <th class="px-4 py-3 text-left text-sm font-semibold">Target DN</th>
           <th class="px-4 py-3 text-left text-sm font-semibold">New DN</th>
           <th class="px-4 py-3 text-left text-sm font-semibold">Date</th>
-          <th class="px-4 py-3 text-left text-sm font-semibold">Created By</th>
           <th class="px-4 py-3 text-left text-sm font-semibold">Actions</th>
          </tr>
         </thead>
@@ -712,7 +709,6 @@
           <td class="px-4 py-3 font-bold">${order.target_dn}</td>
           <td class="px-4 py-3 font-bold">${order.new_dn}</td>
           <td class="px-4 py-3">${new Date(order.order_date).toLocaleDateString()}</td>
-          <td class="px-4 py-3 text-sm" style="color: var(--text-secondary);">${order.created_by || 'N/A'}</td>
           <td class="px-4 py-3">
             <button class="delete-btn px-3 py-1 bg-red-500 text-white rounded-lg" data-id="${order.__backendId}">🗑️</button>
           </td>
@@ -1027,7 +1023,6 @@
               <div class="mt-2 grid grid-cols-2 gap-2 text-sm">
                 <div><strong>Target DN:</strong> ${order.target_dn}</div>
                 <div><strong>New DN:</strong> ${order.new_dn}</div>
-                <div><strong>Created By:</strong> ${order.created_by}</div>
                 <div>
                   <label class="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" ${order.completed ? 'checked' : ''} class="day-order-checkbox w-4 h-4" data-id="${order.__backendId}">
@@ -1279,7 +1274,7 @@
             ${cmiTable}
             ${summary}
             <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb;">
-              <p style="font-size: 12px; color: #666;">Created by: ${currentUser || 'System'}</p>
+              <p style="font-size: 12px; color: #666;">Created by: IKK System</p>
               <p style="font-size: 12px; color: #666;">Generated on: ${new Date().toLocaleString()}</p>
             </div>
           </div>
@@ -1404,17 +1399,16 @@
         e.preventDefault();
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
-        const createdByName = document.getElementById('created-by-name').value.trim();
         
         if (username === 'IKK' && password === '123') {
-          currentUser = createdByName || username;
+          currentUser = username;
           document.getElementById('login-screen').classList.add('hidden');
           document.getElementById('main-header').classList.remove('hidden');
           document.getElementById('main-content').classList.remove('hidden');
           document.getElementById('logged-user').textContent = `Logged in as: ${currentUser}`;
-          showToast(`Welcome, ${currentUser}!`);
+          showToast(`✅ Welcome, ${currentUser}!`);
         } else {
-          showToast('Invalid credentials', 'error');
+          showToast('❌ Invalid credentials', 'error');
         }
       });
 
@@ -1425,7 +1419,8 @@
         document.getElementById('main-content').classList.add('hidden');
         document.getElementById('login-form').reset();
         document.getElementById('username').value = 'IKK';
-        showToast('Logged out successfully');
+        document.getElementById('password').value = '';
+        showToast('👋 Logged out successfully');
       });
 
       document.getElementById('add-order-btn').addEventListener('click', () => {
@@ -1497,7 +1492,7 @@
           new_dn: newDN,
           order_date: document.getElementById('order-date').value,
           completed: false,
-          created_by: currentUser || 'Unknown',
+          created_by: 'IKK',
           created_at: new Date().toISOString()
         };
         
@@ -1885,7 +1880,6 @@
         html += '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Target DN</th>';
         html += '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">New DN</th>';
         html += '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Date</th>';
-        html += '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Created By</th>';
         html += '</tr></thead><tbody>';
         
         currentOrders.forEach(order => {
@@ -1895,7 +1889,6 @@
           html += `<td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">${order.target_dn}</td>`;
           html += `<td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">${order.new_dn}</td>`;
           html += `<td style="border: 1px solid #ddd; padding: 8px;">${new Date(order.order_date).toLocaleDateString()}</td>`;
-          html += `<td style="border: 1px solid #ddd; padding: 8px;">${order.created_by}</td>`;
           html += '</tr>';
         });
         
@@ -1963,7 +1956,7 @@
         html += '</div></div>';
         
         html += '<div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #ccc;">';
-        html += '<p style="font-size: 12px; color: #666;">Created by: ' + (currentUser || 'System') + '</p>';
+        html += '<p style="font-size: 12px; color: #666;">Created by: IKK System</p>';
         html += '<p style="font-size: 12px; color: #666;">Generated on: ' + new Date().toLocaleString() + '</p>';
         html += '</div></div>';
         
@@ -1973,7 +1966,7 @@
       function generatePrintContent() {
         const printContent = document.getElementById('print-content');
         printContent.innerHTML = generatePrintContentHTML();
-        document.getElementById('print-created-by').textContent = currentUser || 'System';
+        document.getElementById('print-created-by').textContent = 'IKK System';
         document.getElementById('print-date').textContent = new Date().toLocaleString();
         return printContent.innerHTML;
       }
@@ -1992,7 +1985,7 @@
           const pdf = new jsPDF();
           pdf.text('DN Analytics - INDAH KIAT KARAWANG', 10, 10);
           pdf.addImage(image.toDataURL('image/png'), 'PNG', 10, 20, 190, 100);
-          pdf.text(`Created by: ${currentUser || 'System'}`, 10, 130);
+          pdf.text('Created by: IKK System', 10, 130);
           pdf.text(`Date: ${new Date().toLocaleString()}`, 10, 140);
           pdf.save('analytics_ikk.pdf');
         }
@@ -2117,5 +2110,5 @@
 
     window.addEventListener('DOMContentLoaded', init);
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b2d76c6f7d7a090',t:'MTc2NjU1MTY4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b2dd9d7c05506b6',t:'MTc2NjU1NTczOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
