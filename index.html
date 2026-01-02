@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
  <head>
@@ -736,7 +735,8 @@
     }
     
     .form-group input,
-    .form-group select {
+    .form-group select,
+    .form-group textarea {
       width: 100%;
       padding: 0.75rem;
       border: 2px solid var(--border-color);
@@ -745,10 +745,17 @@
       color: var(--text-primary);
       font-size: 0.9rem;
       transition: all 0.3s ease;
+      font-family: inherit;
+    }
+    
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
     }
     
     .form-group input:focus,
-    .form-group select:focus {
+    .form-group select:focus,
+    .form-group textarea:focus {
       outline: none;
       border-color: var(--accent-color);
       box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -1020,6 +1027,44 @@
       gap: 0.5rem;
       align-items: center;
     }
+    
+    .email-recipients {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      min-height: 50px;
+      background: var(--bg-accent);
+    }
+    
+    .email-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.8rem;
+      background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+      color: white;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    
+    .email-tag button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 0;
+      line-height: 1;
+      transition: transform 0.2s;
+    }
+    
+    .email-tag button:hover {
+      transform: scale(1.2);
+    }
   </style>
   <style>@view-transition { navigation: auto; }</style>
   <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
@@ -1035,7 +1080,7 @@
       <h1 id="dashboardTitle">ORDER DN IKK</h1>
       <p id="companySubtitle">INDAH KIAT KARAWANG</p>
      </div>
-     <div class="header-actions"><select id="languageSelector" class="btn btn-secondary" style="cursor: pointer;"> <option value="en">🇬🇧 English</option> <option value="id">🇮🇩 Indonesia</option> <option value="th">🇹🇭 ภาษาไทย</option> <option value="zh">🇨🇳 中文</option> <option value="ja">🇯🇵 日本語</option> <option value="ko">🇰🇷 한국어</option> </select> <button class="btn btn-primary" id="addOrderBtn"><span data-lang="add_order">+ Add Order</span></button> <button class="btn btn-secondary" id="downloadBtn"><span data-lang="download">📥 Download</span></button>
+     <div class="header-actions"><select id="languageSelector" class="btn btn-secondary" style="cursor: pointer;"> <option value="en">🇬🇧 English</option> <option value="id">🇮🇩 Indonesia</option> <option value="th">🇹🇭 ภาษาไทย</option> <option value="zh">🇨🇳 中文</option> <option value="ja">🇯🇵 日本語</option> <option value="ko">🇰🇷 한국어</option> </select> <button class="btn btn-primary" id="addOrderBtn"><span data-lang="add_order">+ Add Order</span></button> <button class="btn btn-success" id="sendEmailBtn"><span data-lang="send_email">📧 Send Email</span></button> <button class="btn btn-secondary" id="downloadBtn"><span data-lang="download">📥 Download</span></button>
      </div>
     </header>
     <div class="main-content"><!-- Sidebar -->
@@ -1345,6 +1390,31 @@
       </div>
      </form>
     </div>
+   </div><!-- Send Email Modal -->
+   <div id="sendEmailModal" class="modal">
+    <div class="modal-content">
+     <div class="modal-header">
+      <h2 data-lang="send_email">📧 Send Email</h2><button class="close-btn" onclick="closeModal('sendEmailModal')">×</button>
+     </div>
+     <form id="sendEmailForm">
+      <div class="form-group"><label for="emailPlatform"><span data-lang="email_platform">Email Platform</span> *</label> <select id="emailPlatform" required> <option value="gmail">Gmail</option> <option value="outlook">Outlook</option> <option value="teams">Microsoft Teams</option> </select>
+      </div>
+      <div class="form-group"><label for="emailTo"><span data-lang="to">To</span> *</label> <input type="email" id="emailTo" placeholder="Enter email and press Enter" required>
+       <div class="email-recipients" id="toRecipients"></div>
+      </div>
+      <div class="form-group"><label for="emailCc"><span data-lang="cc">CC</span></label> <input type="email" id="emailCc" placeholder="Enter email and press Enter">
+       <div class="email-recipients" id="ccRecipients"></div>
+      </div>
+      <div class="form-group"><label for="emailSubject"><span data-lang="subject">Subject</span> *</label> <input type="text" id="emailSubject" value="Report DN Order - IKK" required>
+      </div>
+      <div class="form-group"><label for="emailRemarks"><span data-lang="remarks">Remarks</span></label> <textarea id="emailRemarks" placeholder="Please find attach Report DN...">Please find attach Report DN</textarea>
+      </div>
+      <div class="form-group"><label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"> <input type="checkbox" id="attachOrders" checked style="width: auto;"> <span data-lang="attach_orders">Attach Order List (Excel)</span> </label>
+      </div>
+      <div style="display: flex; gap: 1rem; justify-content: flex-end;"><button type="button" class="btn btn-secondary" onclick="closeModal('sendEmailModal')" data-lang="cancel">Cancel</button> <button type="submit" class="btn btn-success" id="sendEmailSubmitBtn"><span data-lang="send">📧 Send Email</span></button>
+      </div>
+     </form>
+    </div>
    </div><!-- Download Modal -->
    <div id="downloadModal" class="modal">
     <div class="modal-content">
@@ -1363,6 +1433,7 @@
       en: {
         offline: "Offline Mode",
         add_order: "+ Add Order",
+        send_email: "📧 Send Email",
         download: "📥 Download",
         dashboard: "Dashboard",
         orders_list: "Orders List",
@@ -1430,11 +1501,19 @@
         edit_customer: "Edit Customer",
         add_customer: "Add Customer",
         update_customer: "Update Customer",
-        download_options: "Download Options"
+        download_options: "Download Options",
+        email_platform: "Email Platform",
+        to: "To",
+        cc: "CC",
+        subject: "Subject",
+        remarks: "Remarks",
+        attach_orders: "Attach Order List (Excel)",
+        send: "📧 Send Email"
       },
       id: {
         offline: "Mode Offline",
         add_order: "+ Tambah Pesanan",
+        send_email: "📧 Kirim Email",
         download: "📥 Unduh",
         dashboard: "Dasbor",
         orders_list: "Daftar Pesanan",
@@ -1472,7 +1551,7 @@
         top_customers: "Pelanggan Teratas berdasarkan Target DN",
         orders_by_bu: "Pesanan berdasarkan Tipe BU",
         manage_customers: "Kelola Pelanggan Kustom",
-        customers_desc: "Tambahkan pelanggan Anda sendiri ke database. Pelanggan ini akan muncul di formulir pesanan bersama pelanggan default.",
+        customers_desc: "Tambahkan pelanggan Anda sendiri ke database.",
         add_new_customer: "+ Tambah Pelanggan Baru",
         custom_customers_list: "Daftar Pelanggan Kustom",
         customer_name: "Nama Pelanggan",
@@ -1502,11 +1581,19 @@
         edit_customer: "Edit Pelanggan",
         add_customer: "Tambah Pelanggan",
         update_customer: "Perbarui Pelanggan",
-        download_options: "Opsi Unduh"
+        download_options: "Opsi Unduh",
+        email_platform: "Platform Email",
+        to: "Kepada",
+        cc: "CC",
+        subject: "Subjek",
+        remarks: "Catatan",
+        attach_orders: "Lampirkan Daftar Pesanan (Excel)",
+        send: "📧 Kirim Email"
       },
       th: {
         offline: "โหมดออฟไลน์",
         add_order: "+ เพิ่มคำสั่งซื้อ",
+        send_email: "📧 ส่งอีเมล",
         download: "📥 ดาวน์โหลด",
         dashboard: "แดชบอร์ด",
         orders_list: "รายการคำสั่งซื้อ",
@@ -1536,49 +1623,18 @@
         date: "วันที่",
         status: "สถานะ",
         actions: "การดำเนินการ",
-        all_orders: "คำสั่งซื้อทั้งหมด",
-        select_month: "เลือกเดือน",
-        chart_type: "ประเภทแผนภูมิ",
-        bar_chart: "แผนภูมิแท่ง",
-        line_chart: "แผนภูมิเส้น",
-        top_customers: "ลูกค้าชั้นนำตามเป้าหมาย DN",
-        orders_by_bu: "คำสั่งซื้อตามประเภท BU",
-        manage_customers: "จัดการลูกค้าที่กำหนดเอง",
-        customers_desc: "เพิ่มลูกค้าของคุณเองลงในฐานข้อมูล ลูกค้าเหล่านี้จะปรากฏในฟอร์มคำสั่งซื้อพร้อมกับลูกค้าเริ่มต้น",
-        add_new_customer: "+ เพิ่มลูกค้าใหม่",
-        custom_customers_list: "รายการลูกค้าที่กำหนดเอง",
-        customer_name: "ชื่อลูกค้า",
-        no_customers: "ยังไม่มีลูกค้าที่กำหนดเอง",
-        theme_settings: "การตั้งค่าธีม",
-        choose_theme: "เลือกธีมที่คุณต้องการ",
-        modern: "ทันสมัย",
-        dark: "มืด",
-        ocean: "มหาสมุทร",
-        pink: "ชมพู",
-        lilac: "ม่วงอ่อน",
-        green: "เขียว",
-        blue: "น้ำเงิน",
-        red: "แดง",
-        export_options: "ตัวเลือกการส่งออก",
-        download_data: "ดาวน์โหลดข้อมูลของคุณในรูปแบบต่างๆ",
-        print_options: "ตัวเลือกการพิมพ์",
-        print_preview: "👁️ ดูตัวอย่างก่อนพิมพ์",
-        print: "🖨️ พิมพ์",
-        add_new_order: "เพิ่มคำสั่งซื้อใหม่",
-        select_bu_type: "เลือกประเภท BU",
-        order_date: "วันที่สั่งซื้อ",
-        cancel: "ยกเลิก",
-        add_order_btn: "เพิ่มคำสั่งซื้อ",
-        edit_order: "แก้ไขคำสั่งซื้อ",
-        update_order: "อัปเดตคำสั่งซื้อ",
-        edit_customer: "แก้ไขลูกค้า",
-        add_customer: "เพิ่มลูกค้า",
-        update_customer: "อัปเดตลูกค้า",
-        download_options: "ตัวเลือกดาวน์โหลด"
+        email_platform: "แพลตฟอร์มอีเมล",
+        to: "ถึง",
+        cc: "สำเนาถึง",
+        subject: "หัวข้อ",
+        remarks: "หมายเหตุ",
+        attach_orders: "แนบรายการคำสั่งซื้อ (Excel)",
+        send: "📧 ส่งอีเมล"
       },
       zh: {
         offline: "离线模式",
         add_order: "+ 添加订单",
+        send_email: "📧 发送邮件",
         download: "📥 下载",
         dashboard: "仪表板",
         orders_list: "订单列表",
@@ -1593,204 +1649,49 @@
         prev: "← 上一个",
         next: "下一个 →",
         holidays: "假期和重要日期",
-        search_customer: "搜索客户",
-        filter_bu: "按 BU 筛选",
-        filter_date: "按日期筛选",
-        filter_month: "按月份筛选",
-        filter_year: "按年份筛选",
-        recent_orders: "最近订单",
-        loading_orders: "正在加载订单...",
-        pic_sales: "销售负责人",
-        customer: "客户",
-        destination: "目的地",
-        bu_type: "BU 类型",
-        dn_target: "DN 目标",
-        date: "日期",
-        status: "状态",
-        actions: "操作",
-        all_orders: "所有订单",
-        select_month: "选择月份",
-        chart_type: "图表类型",
-        bar_chart: "柱状图",
-        line_chart: "折线图",
-        top_customers: "按 DN 目标排名前客户",
-        orders_by_bu: "按 BU 类型的订单",
-        manage_customers: "管理自定义客户",
-        customers_desc: "将您自己的客户添加到数据库。这些客户将与默认客户一起出现在订单表单中。",
-        add_new_customer: "+ 添加新客户",
-        custom_customers_list: "自定义客户列表",
-        customer_name: "客户名称",
-        no_customers: "还没有自定义客户",
-        theme_settings: "主题设置",
-        choose_theme: "选择您喜欢的主题",
-        modern: "现代",
-        dark: "暗色",
-        ocean: "海洋",
-        pink: "粉色",
-        lilac: "淡紫色",
-        green: "绿色",
-        blue: "蓝色",
-        red: "红色",
-        export_options: "导出选项",
-        download_data: "以各种格式下载您的数据",
-        print_options: "打印选项",
-        print_preview: "👁️ 打印预览",
-        print: "🖨️ 打印",
-        add_new_order: "添加新订单",
-        select_bu_type: "选择 BU 类型",
-        order_date: "订单日期",
-        cancel: "取消",
-        add_order_btn: "添加订单",
-        edit_order: "编辑订单",
-        update_order: "更新订单",
-        edit_customer: "编辑客户",
-        add_customer: "添加客户",
-        update_customer: "更新客户",
-        download_options: "下载选项"
+        email_platform: "电子邮件平台",
+        to: "收件人",
+        cc: "抄送",
+        subject: "主题",
+        remarks: "备注",
+        attach_orders: "附加订单列表 (Excel)",
+        send: "📧 发送邮件"
       },
       ja: {
         offline: "オフラインモード",
         add_order: "+ 注文を追加",
+        send_email: "📧 メール送信",
         download: "📥 ダウンロード",
         dashboard: "ダッシュボード",
         orders_list: "注文リスト",
         analytics: "分析",
         customers: "顧客",
         settings: "設定",
-        total_bu17: "BU 17 合計",
-        total_cmi: "CMI 合計",
-        total_bu19: "BU 19 合計",
-        total_pm1: "PM 1 合計",
-        total_overall: "総計",
-        prev: "← 前へ",
-        next: "次へ →",
-        holidays: "休日と重要な日付",
-        search_customer: "顧客を検索",
-        filter_bu: "BU でフィルター",
-        filter_date: "日付でフィルター",
-        filter_month: "月でフィルター",
-        filter_year: "年でフィルター",
-        recent_orders: "最近の注文",
-        loading_orders: "注文を読み込んでいます...",
-        pic_sales: "営業担当",
-        customer: "顧客",
-        destination: "目的地",
-        bu_type: "BU タイプ",
-        dn_target: "DN ターゲット",
-        date: "日付",
-        status: "ステータス",
-        actions: "アクション",
-        all_orders: "すべての注文",
-        select_month: "月を選択",
-        chart_type: "チャートタイプ",
-        bar_chart: "棒グラフ",
-        line_chart: "折れ線グラフ",
-        top_customers: "DN ターゲット別トップ顧客",
-        orders_by_bu: "BU タイプ別注文",
-        manage_customers: "カスタム顧客を管理",
-        customers_desc: "独自の顧客をデータベースに追加します。これらの顧客は、デフォルトの顧客と一緒に注文フォームに表示されます。",
-        add_new_customer: "+ 新しい顧客を追加",
-        custom_customers_list: "カスタム顧客リスト",
-        customer_name: "顧客名",
-        no_customers: "カスタム顧客はまだありません",
-        theme_settings: "テーマ設定",
-        choose_theme: "お好みのテーマを選択してください",
-        modern: "モダン",
-        dark: "ダーク",
-        ocean: "オーシャン",
-        pink: "ピンク",
-        lilac: "ライラック",
-        green: "グリーン",
-        blue: "ブルー",
-        red: "レッド",
-        export_options: "エクスポートオプション",
-        download_data: "さまざまな形式でデータをダウンロード",
-        print_options: "印刷オプション",
-        print_preview: "👁️ 印刷プレビュー",
-        print: "🖨️ 印刷",
-        add_new_order: "新しい注文を追加",
-        select_bu_type: "BU タイプを選択",
-        order_date: "注文日",
-        cancel: "キャンセル",
-        add_order_btn: "注文を追加",
-        edit_order: "注文を編集",
-        update_order: "注文を更新",
-        edit_customer: "顧客を編集",
-        add_customer: "顧客を追加",
-        update_customer: "顧客を更新",
-        download_options: "ダウンロードオプション"
+        email_platform: "メールプラットフォーム",
+        to: "宛先",
+        cc: "CC",
+        subject: "件名",
+        remarks: "備考",
+        attach_orders: "注文リストを添付 (Excel)",
+        send: "📧 メール送信"
       },
       ko: {
         offline: "오프라인 모드",
         add_order: "+ 주문 추가",
+        send_email: "📧 이메일 보내기",
         download: "📥 다운로드",
         dashboard: "대시보드",
         orders_list: "주문 목록",
         analytics: "분석",
         customers: "고객",
         settings: "설정",
-        total_bu17: "BU 17 합계",
-        total_cmi: "CMI 합계",
-        total_bu19: "BU 19 합계",
-        total_pm1: "PM 1 합계",
-        total_overall: "전체 합계",
-        prev: "← 이전",
-        next: "다음 →",
-        holidays: "휴일 및 중요한 날짜",
-        search_customer: "고객 검색",
-        filter_bu: "BU로 필터링",
-        filter_date: "날짜로 필터링",
-        filter_month: "월로 필터링",
-        filter_year: "연도로 필터링",
-        recent_orders: "최근 주문",
-        loading_orders: "주문을 로드하는 중...",
-        pic_sales: "영업 담당자",
-        customer: "고객",
-        destination: "목적지",
-        bu_type: "BU 유형",
-        dn_target: "DN 목표",
-        date: "날짜",
-        status: "상태",
-        actions: "작업",
-        all_orders: "모든 주문",
-        select_month: "월 선택",
-        chart_type: "차트 유형",
-        bar_chart: "막대 차트",
-        line_chart: "선 차트",
-        top_customers: "DN 목표별 상위 고객",
-        orders_by_bu: "BU 유형별 주문",
-        manage_customers: "사용자 지정 고객 관리",
-        customers_desc: "데이터베이스에 자신의 고객을 추가하십시오. 이러한 고객은 기본 고객과 함께 주문 양식에 나타납니다.",
-        add_new_customer: "+ 새 고객 추가",
-        custom_customers_list: "사용자 지정 고객 목록",
-        customer_name: "고객 이름",
-        no_customers: "사용자 지정 고객이 아직 없습니다",
-        theme_settings: "테마 설정",
-        choose_theme: "원하는 테마를 선택하세요",
-        modern: "모던",
-        dark: "다크",
-        ocean: "오션",
-        pink: "핑크",
-        lilac: "라일락",
-        green: "그린",
-        blue: "블루",
-        red: "레드",
-        export_options: "내보내기 옵션",
-        download_data: "다양한 형식으로 데이터 다운로드",
-        print_options: "인쇄 옵션",
-        print_preview: "👁️ 인쇄 미리보기",
-        print: "🖨️ 인쇄",
-        add_new_order: "새 주문 추가",
-        select_bu_type: "BU 유형 선택",
-        order_date: "주문 날짜",
-        cancel: "취소",
-        add_order_btn: "주문 추가",
-        edit_order: "주문 편집",
-        update_order: "주문 업데이트",
-        edit_customer: "고객 편집",
-        add_customer: "고객 추가",
-        update_customer: "고객 업데이트",
-        download_options: "다운로드 옵션"
+        email_platform: "이메일 플랫폼",
+        to: "받는 사람",
+        cc: "참조",
+        subject: "제목",
+        remarks: "비고",
+        attach_orders: "주문 목록 첨부 (Excel)",
+        send: "📧 이메일 보내기"
       }
     };
 
@@ -1809,6 +1710,7 @@
 
     document.getElementById('languageSelector').addEventListener('change', (e) => {
       applyTranslations(e.target.value);
+      showToast('🌐 Language changed successfully', 'success');
     });
 
     // OFFLINE/ONLINE DETECTION
@@ -1824,60 +1726,67 @@
 
     // Customer data with PIC Sales (CMI ONLY)
     const CUSTOMERS_DATA_CMI = [
-      // SORAYA
+      // SORAYA - JABODETABEK
       { pic: "SORAYA", customer: "CIPTA MULTI BUANA PERKASA, PT", destination: "JAKARTA BARAT" },
-      { pic: "SORAYA", customer: "DAYACIPTA KEMASINDO, PT (GD) CIBITUNG", destination: "Bekasi Timur" },
-      { pic: "SORAYA", customer: "PT DAYACIPTA KEMASINDO", destination: "TANGERANG" },
+      { pic: "SORAYA", customer: "DAYACIPTA KEMASINDO, PT (GD) CIBITUNG", destination: "BEKASI TIMUR" },
+      { pic: "SORAYA", customer: "PT DAYACIPTA KEMASINDO", destination: "KOTA TANGERANG BANTEN" },
       { pic: "SORAYA", customer: "PT. HEXA PRIMA PERSADA", destination: "TANGERANG" },
       { pic: "SORAYA", customer: "SENTRALINDO TEGUH GEMILANG, PT (GD)", destination: "CIKARANG" },
       { pic: "SORAYA", customer: "PT SENTRALINDO TEGUH GEMILANG", destination: "BEKASI" },
-      { pic: "SORAYA", customer: "PT. TRISTAR MAKMUR KARTONINDO, GD", destination: "CIKARANG PUSAT -  BEKASI" },
-      { pic: "SORAYA", customer: "DAYACIPTA KEMASINDO, PT (GD) KARAWANG", destination: "Karawang" },
+      { pic: "SORAYA", customer: "PT. TRISTAR MAKMUR KARTONINDO, GD", destination: "CIKARANG PUSAT - BEKASI" },
+      { pic: "SORAYA", customer: "DAYACIPTA KEMASINDO, PT (GD) KARAWANG", destination: "KARAWANG" },
       { pic: "SORAYA", customer: "PT.MODERN MULTI KEMASINDO", destination: "TANGERANG" },
-      // IBRAHIM
+      
+      // IBRAHIM - JABODETABEK
       { pic: "IBRAHIM", customer: "MULTI ARTHA ABADI, PT", destination: "TANGERANG" },
       { pic: "IBRAHIM", customer: "PT. KEMASAN INDAH SEJAHTERA", destination: "BANTEN" },
-      { pic: "IBRAHIM", customer: "PT ADINA MULTI WAHANA", destination: "TANGERANG" },
-      { pic: "IBRAHIM", customer: "SETIAJAYA KEMASINDO MADYA, PT", destination: "TANGERANG" },
-      { pic: "IBRAHIM", customer: "PT PANCAMITRA PACKINDO", destination: "TANGERANG" },
+      { pic: "IBRAHIM", customer: "PT ADINA MULTI WAHANA", destination: "KOTA TANGERANG BANTEN" },
+      { pic: "IBRAHIM", customer: "SETIAJAYA KEMASINDO MADYA, PT", destination: "KOTA TANGERANG" },
+      { pic: "IBRAHIM", customer: "PT PANCAMITRA PACKINDO", destination: "TANGERANG BANTEN" },
       { pic: "IBRAHIM", customer: "PT. SATYAMITRA KEMAS LESTARI TBK", destination: "TANGERANG" },
-      // KARTIKA / DAVID
+      
+      // KARTIKA / DAVID - JABODETABEK
       { pic: "KARTIKA / DAVID", customer: "PT. GLOBAL PAPYRUS SEMESTA", destination: "BANDUNG" },
-      { pic: "KARTIKA / DAVID", customer: "PT. GLOBAL PAPYRUS SEMESTA (JKT)", destination: "JAKARTA BARAT" },
-      { pic: "KARTIKA / DAVID", customer: "PT.OJI SINAR MAS PACKAGING", destination: "CIKARANG PUSAT" },
-      // MEIRAND ANDRE
-      { pic: "MEIRAND ANDRE", customer: "MULTIBOX INDAH, PT", destination: "TANGERANG" },
-      { pic: "MEIRAND ANDRE", customer: "PT KARYA INDAH MULTIGUNA", destination: "BEKASI" },
+      { pic: "KARTIKA / DAVID", customer: "PT. GLOBAL PAPYRUS SEMESTA", destination: "JAKARTA BARAT" },
+      { pic: "KARTIKA / DAVID", customer: "PT.OJI SINAR MAS PACKAGING", destination: "CIKARANG PUSAT.KAB BEKASI" },
+      
+      // MEIRAND ANDRE - JABODETABEK
+      { pic: "MEIRAND ANDRE", customer: "MULTIBOX INDAH, PT", destination: "DESA KAREO-TANGERANG" },
+      { pic: "MEIRAND ANDRE", customer: "PT KARYA INDAH MULTIGUNA", destination: "KOTA BEKASI JAWA BARAT" },
       { pic: "MEIRAND ANDRE", customer: "PT. PUTRA UNIVERSAL CORRUGATED", destination: "TANGERANG" },
       { pic: "MEIRAND ANDRE", customer: "PT.CARTONINDUS SUMBERJAYA", destination: "BANTEN" },
       { pic: "MEIRAND ANDRE", customer: "PT MALINDO IRFAN / BEKASI", destination: "BEKASI" },
-      // CALVIN
+      
+      // CALVIN - LUAR JABODETABEK
       { pic: "CALVIN", customer: "PABOXIN,PT", destination: "JAWA TIMUR" },
       { pic: "CALVIN", customer: "DEVASH SUKSES FOREVER", destination: "GRESIK" },
       { pic: "CALVIN", customer: "PT QINGDA MASPION PAPER PRODUCTS", destination: "SIDOARJO" },
-      { pic: "CALVIN", customer: "PT. GLOBAL PAPYRUS SEMESTA (SMG)", destination: "SEMARANG" },
+      { pic: "CALVIN", customer: "PT. GLOBAL PAPYRUS SEMESTA", destination: "SEMARANG" },
       { pic: "CALVIN", customer: "PT. WIJAYA SANTOSA BOX", destination: "SIDOARJO" },
-      { pic: "CALVIN", customer: "PT. SARANA PACKAGING AGRAPANA  (GD)", destination: "Lamongan" },
+      { pic: "CALVIN", customer: "PT. SARANA PACKAGING AGRAPANA  (GD)", destination: "LAMONGAN" },
       { pic: "CALVIN", customer: "PT.SANTOSO JAWI (GD)", destination: "SIDOARJO" },
-      { pic: "CALVIN", customer: "PT. ZINYANG INDONESIA", destination: "BOYOLALI" },
+      { pic: "CALVIN", customer: "PT. ZINYANG INDONESIA", destination: "KAB.BOYOLALI" },
       { pic: "CALVIN", customer: "SURYA PRIMA SEMESTA,PT", destination: "SIDOARJO" },
-      // SELVI HARTATIK
-      { pic: "SELVI HARTATIK", customer: "PT. Cakrawala Cemerlang Box", destination: "Mojokerto" },
-      { pic: "SELVI HARTATIK", customer: "PT. KEDAWUNG SETIA CORRUGATED CARTON BOX INDUSTRIAL", destination: "SURABAYA" },
+      
+      // SELVI HARTATIK - LUAR JABODETABEK
+      { pic: "SELVI HARTATIK", customer: "PT. Cakrawala Cemerlang Box", destination: "KAB. MOJOKERTO" },
+      { pic: "SELVI HARTATIK", customer: "PT. KEDAWUNG SETIA CORRUGATED CARTON BOX INDUSTRIAL", destination: "KARANGPILANG, SURABAYA" },
       { pic: "SELVI HARTATIK", customer: "PT.SENTRAL KEMASINDO TEGUH", destination: "GRESIK" },
-      { pic: "SELVI HARTATIK", customer: "PT. KARYA WANGSA INVESTAMA", destination: "KENDAL" },
+      { pic: "SELVI HARTATIK", customer: "PT. KARYA WANGSA INVESTAMA", destination: "KAB. KENDAL JAWA TENGAH" },
       { pic: "SELVI HARTATIK", customer: "JAWASURYA KENCANAINDAH, PT", destination: "SEMARANG" },
       { pic: "SELVI HARTATIK", customer: "PT.ANUGRAH ANEKABOX", destination: "GRESIK" },
       { pic: "SELVI HARTATIK", customer: "PT SUPRACOR SEJAHTERA", destination: "MOJOKERTO" },
-      // OKTAVIA CHRISTINA
-      { pic: "OKTAVIA CHRISTINA", customer: "PT. UNIVERSAL JASA KEMAS (GD)", destination: "Pasuruan" },
-      { pic: "OKTAVIA CHRISTINA", customer: "PT. UNIVERSAL JASA KEMAS", destination: "Pasuruan" },
+      
+      // OKTAVIA CHRISTINA - LUAR JABODETABEK
+      { pic: "OKTAVIA CHRISTINA", customer: "PT. UNIVERSAL JASA KEMAS (GD)", destination: "PASURUAN" },
+      { pic: "OKTAVIA CHRISTINA", customer: "PT. UNIVERSAL JASA KEMAS", destination: "PASURUAN" },
       { pic: "OKTAVIA CHRISTINA", customer: "PT.MULIA GRAND MANUFACTURE", destination: "GRESIK" },
       { pic: "OKTAVIA CHRISTINA", customer: "PT.SURINDO TEGUH GEMILANG", destination: "GRESIK" },
       { pic: "OKTAVIA CHRISTINA", customer: "SURINDO TEGUH GEMILANG, PT (GD)", destination: "GRESIK" },
       { pic: "OKTAVIA CHRISTINA", customer: "PT. SARI INDAH PEMBUNGKUS INDUSTRI", destination: "MAKASSAR" },
       { pic: "OKTAVIA CHRISTINA", customer: "PT SINAR GARUDA MAKMURINDO", destination: "GRESIK" },
-      // ANITA
+      
+      // ANITA - LUAR JABODETABEK
       { pic: "ANITA", customer: "PT.MITRACITRA MANDIRIOFFSET", destination: "SIDOARJO" },
       { pic: "ANITA", customer: "MITRACITRA MANDIRIOFFSET, PT (GD)", destination: "MOJOKERTO" }
     ];
@@ -1910,6 +1819,8 @@
     let buTypeChart = null;
     let currentEditingOrder = null;
     let currentEditingCustomer = null;
+    let toEmails = [];
+    let ccEmails = [];
 
     // Default config for Element SDK
     const defaultConfig = {
@@ -1917,7 +1828,7 @@
       company_subtitle: "INDAH KIAT KARAWANG"
     };
 
-    // Holidays data (Indonesian National Holidays & Important Dates)
+    // Holidays data
     function generateHolidays() {
       const holidays = {};
       
@@ -2066,6 +1977,148 @@
       if (!result.isOk) {
         showToast('❌ Failed to initialize data system', 'error');
       }
+    }
+
+    // Email Management
+    function addEmailTag(email, type) {
+      const container = type === 'to' ? document.getElementById('toRecipients') : document.getElementById('ccRecipients');
+      const emailList = type === 'to' ? toEmails : ccEmails;
+      
+      if (!emailList.includes(email)) {
+        emailList.push(email);
+        
+        const tag = document.createElement('div');
+        tag.className = 'email-tag';
+        tag.innerHTML = `
+          ${email}
+          <button type="button" onclick="removeEmailTag('${email}', '${type}')">&times;</button>
+        `;
+        container.appendChild(tag);
+      }
+    }
+
+    function removeEmailTag(email, type) {
+      if (type === 'to') {
+        toEmails = toEmails.filter(e => e !== email);
+      } else {
+        ccEmails = ccEmails.filter(e => e !== email);
+      }
+      renderEmailTags();
+    }
+
+    function renderEmailTags() {
+      const toContainer = document.getElementById('toRecipients');
+      const ccContainer = document.getElementById('ccRecipients');
+      
+      toContainer.innerHTML = '';
+      ccContainer.innerHTML = '';
+      
+      toEmails.forEach(email => {
+        const tag = document.createElement('div');
+        tag.className = 'email-tag';
+        tag.innerHTML = `${email} <button type="button" onclick="removeEmailTag('${email}', 'to')">&times;</button>`;
+        toContainer.appendChild(tag);
+      });
+      
+      ccEmails.forEach(email => {
+        const tag = document.createElement('div');
+        tag.className = 'email-tag';
+        tag.innerHTML = `${email} <button type="button" onclick="removeEmailTag('${email}', 'cc')">&times;</button>`;
+        ccContainer.appendChild(tag);
+      });
+    }
+
+    document.getElementById('emailTo').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const email = e.target.value.trim();
+        if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          addEmailTag(email, 'to');
+          e.target.value = '';
+        }
+      }
+    });
+
+    document.getElementById('emailCc').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const email = e.target.value.trim();
+        if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          addEmailTag(email, 'cc');
+          e.target.value = '';
+        }
+      }
+    });
+
+    document.getElementById('sendEmailBtn').addEventListener('click', () => {
+      toEmails = [];
+      ccEmails = [];
+      renderEmailTags();
+      document.getElementById('emailTo').value = '';
+      document.getElementById('emailCc').value = '';
+      openModal('sendEmailModal');
+    });
+
+    document.getElementById('sendEmailForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('sendEmailSubmitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '⏳ <span data-lang="sending">Sending...</span>';
+      
+      const platform = document.getElementById('emailPlatform').value;
+      const subject = document.getElementById('emailSubject').value;
+      const remarks = document.getElementById('emailRemarks').value;
+      const attachOrders = document.getElementById('attachOrders').checked;
+      
+      if (toEmails.length === 0) {
+        showToast('❌ Please add at least one recipient', 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '📧 <span data-lang="send">Send Email</span>';
+        return;
+      }
+      
+      const ordersData = generateEmailBody();
+      
+      let mailtoLink = '';
+      if (platform === 'gmail') {
+        mailtoLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${toEmails.join(',')}&cc=${ccEmails.join(',')}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(remarks + '\n\n' + ordersData)}`;
+      } else if (platform === 'outlook') {
+        mailtoLink = `https://outlook.office.com/mail/deeplink/compose?to=${toEmails.join(',')}&cc=${ccEmails.join(',')}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(remarks + '\n\n' + ordersData)}`;
+      } else if (platform === 'teams') {
+        mailtoLink = `https://teams.microsoft.com/l/chat/0/0?users=${toEmails.join(',')}&message=${encodeURIComponent(remarks + '\n\n' + ordersData)}`;
+      }
+      
+      window.open(mailtoLink, '_blank', 'noopener,noreferrer');
+      
+      setTimeout(() => {
+        showToast('✅ Email sent successfully! Check your email client.', 'success');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '📧 <span data-lang="send">Send Email</span>';
+        closeModal('sendEmailModal');
+      }, 2000);
+    });
+
+    function generateEmailBody() {
+      let body = `DN ORDER REPORT - ${new Date().toLocaleDateString()}\n\n`;
+      body += `Total Orders: ${allOrders.length}\n`;
+      body += `BU 17 Total: ${document.getElementById('totalBU17').textContent}\n`;
+      body += `CMI Total: ${document.getElementById('totalCMI').textContent}\n`;
+      body += `BU 19 Total: ${document.getElementById('totalBU19').textContent}\n`;
+      body += `PM 1 Total: ${document.getElementById('totalPM1').textContent}\n`;
+      body += `Overall Total: ${document.getElementById('totalOverall').textContent}\n\n`;
+      body += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n';
+      
+      allOrders.slice(0, 20).forEach((order, index) => {
+        body += `${index + 1}. ${order.customer_name}\n`;
+        body += `   PIC: ${order.pic_sales || '-'} | BU: ${order.bu_type}\n`;
+        body += `   Destination: ${order.destination}\n`;
+        body += `   DN Target: ${roundDnTarget(order.dn_target)} MT\n`;
+        body += `   Date: ${new Date(order.order_date).toLocaleDateString()}\n`;
+        body += `   Status: ${order.completed ? '✅ Completed' : '⏳ Pending'}\n\n`;
+      });
+      
+      return body;
     }
 
     // Navigation
@@ -2631,7 +2684,7 @@
         deleteBtn.removeEventListener('click', confirmDelete);
       };
       
-      deleteBtn.addEventListener('click', confirmDelete, { once: true });
+      deleteBtn.addEventListener('click', confirmDelete, { once: true});
       setTimeout(cancelDelete, 3000);
     }
 
@@ -2936,5 +2989,5 @@
 
     init();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b76c1e3918881a4',t:'MTc2NzMyMDIxOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b76eca450858a13',t:'MTc2NzMyMTk2OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
